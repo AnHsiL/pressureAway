@@ -1,11 +1,9 @@
-// const { initializeApp, applicationDefault } = require('firebase-admin/app');
 const { getFirestore } = require('firebase-admin/firestore');
-
+const { getDatabase, ref, onValue} =  require ("firebase-admin/database");
 var admin = require("firebase-admin");
 var serviceAccount = require("../credential/project-e2d9c-firebase-adminsdk-a9h8w-d65bce6dfe.json");
 
 // For Firebase JS SDK v7.20.0 and later, measurementId is optional
-
 const firebaseConfig = {
     apiKey: "AIzaSyBI2Tp1qwk4mnJ5O36qOsRoJr39QgKLpuQ",
     authDomain: "project-e2d9c.firebaseapp.com",
@@ -17,66 +15,27 @@ const firebaseConfig = {
     measurementId: "G-JG24VJJRE4",
     credential: admin.credential.cert(serviceAccount),
     databaseURL: "https://project-e2d9c-default-rtdb.firebaseio.com/"
-  };
+};
 
 // Initialize Firebase
 const firebaseApp = admin.initializeApp(firebaseConfig);
 
 // DB CRUD
-const db = getFirestore(firebaseApp);
+const db = getDatabase(firebaseApp);
 
 module.exports = class CRUD {
 
+    static async readAllData() {
+        try {
+            return new Promise((resolve) => {
+                db.ref('/').on('value',e => {
+                    resolve(e.val());
+                });
+            });
+
+        } catch (e) {
+            console.error("Error reading document: ", e);
+        }
+    }
     
-    static async readAllData(col) {
-
-        var res = {};
-        var ref = db.collection(col);
-        var returnData = [];
-        try {
-            return new Promise((resolve) => {
-                ref.get().then((foundData) => {
-                    foundData.forEach(doc => {
-                        returnData.push({
-                            docData: doc.data(),
-                            docId: doc.id
-                        });
-                    });
-                    res.data = returnData;
-                    resolve(res);
-                });
-            });
-
-        } catch (e) {
-            console.error("Error reading document: ", e);
-        }
-    }
-    static async readDataByDocId(col, id) {
-
-        var ref = db.collection(col).doc(id);
-        try {
-            return new Promise((resolve) => {
-                ref.get().then((doc) => {
-                    var res = doc.data();
-                    resolve(res);
-                });
-            });
-
-        } catch (e) {
-            console.error("Error reading document: ", e);
-        }
-    }
-    static async updateData(col, queryDoc, queryOperation, queryContent, data) {
-        var ref = db.collection(col);
-        try {
-            ref.where(queryDoc, queryOperation, queryContent).get().then(foundData => {
-                foundData.forEach(doc => {
-                    var docId = doc.id;
-                    ref.doc(docId).update(data);
-                });
-            });
-        } catch (e) {
-            console.error("Error changing document: ", e);
-        }
-    }
 }
