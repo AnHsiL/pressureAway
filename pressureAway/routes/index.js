@@ -4,8 +4,7 @@ var router = express.Router();
 var myModules = require("../controller/controller");
 myModules = new myModules();
 
-// router.post('/getAllData', myModules.getAllData);
-router.get('/getAllData', myModules.getAllData);
+router.post('/getAllData', myModules.getAllData);
 
 
 module.exports = router;

@@ -9,6 +9,6 @@
     
           > pressureaway@0.0.0 start
           > node ./bin/www
-  * 打開瀏覽器或 postman 輸入網址 http://localhost:3000/getAllData (postman 方法選 GET)
+  * 打開瀏覽器或 postman 輸入網址 http://localhost:3000/getAllData (postman 方法選 POST)
   * 得到 JSON 型態的資料
 

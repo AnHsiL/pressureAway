@@ -38,7 +38,7 @@ function caltotalSugar(data, dateToAsk){
 var ori_data = $(data);
 var data = ori_data.project;
 var editData = {};
-var dateToAsk = "2023/06/15";
+var dateToAsk = "2023/06/29";
 
 var sugarContinue = caltotalSugar(data, dateToAsk);
 editData.stuff_num = data.employee_num;
