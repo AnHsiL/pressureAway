@@ -35,4 +35,5 @@ module.exports = class Controller {
             res.err();
         }
     }
+    
 }
