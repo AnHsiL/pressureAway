@@ -1,5 +1,4 @@
-const { getFirestore } = require('firebase-admin/firestore');
-const { getDatabase, ref, onValue} =  require ("firebase-admin/database");
+const { getDatabase} =  require ("firebase-admin/database");
 var admin = require("firebase-admin");
 var serviceAccount = require("../credential/project-e2d9c-firebase-adminsdk-a9h8w-d65bce6dfe.json");
 
@@ -33,6 +32,18 @@ module.exports = class CRUD {
                 });
             });
 
+        } catch (e) {
+            console.error("Error reading document: ", e);
+        }
+    }
+    
+    static async setPersonalTask(daily_task_idx, each_task_idx, newData) {
+        var path = "/project/daily_task/"+ daily_task_idx + "/each_task/"+ each_task_idx +"/task/task_detail";
+        console.log(path);
+
+        try {
+            db.ref(path).set('');
+            db.ref(path).set(newData);
         } catch (e) {
             console.error("Error reading document: ", e);
         }
