@@ -11,28 +11,28 @@
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.0/jquery.min.js"></script>
     <script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@10"></script>
-    <script type="module" src="../javascripts/index.js"></script>
+    <script type="module" src="../javascripts/sched.js"></script>
 </head>
 
 <body>
-    <h1>welcome to pressure away</h1>
-    <b>hello world~</b>
-
-    <p id="all_data">nop</p>
-    <br>
-    <button id="btn_get" class="btn-primary">get Data</button>
-    <br><br>
-    <span>
-        <div>date</div><input id="input_date" placeholder="yyyy:mm:dd">
-    </span><br>
-    <span>
-        <div>name</div><input id="input_name">
-    </span><br>
-    <span>
-        <div>date</div><input id="input_dataToChange" placeholder="array[]">
-    </span><br>
-    <br>
-    <button id="btn_set" class="btn-primary">set Data</button>
+    <table class="tb">
+        <tr>
+            <th>星期一</th>
+            <th>星期二</th>
+            <th>星期三</th>
+            <th>星期四</th>
+            <th>星期五</th>
+        </tr>
+        <tr>
+            <td id="a">1</td>
+            <td id="b">2</td>
+            <td id="c">3</td>
+            <td id="d">4</td>
+            <td id="e">5</td>
+        </tr>
+        </tr>
+    </table>
+    <button id="btn_try" class="btn-primary">set Data</button>
 </body>
 
 </html>
