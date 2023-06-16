@@ -5,9 +5,14 @@ function dateDiff(Date1, Date2){
     return milliseconds_Time / (1000 * 3600 * 24);
 };
 function caltotalSugar(data, dateToAsk){
-    var sugarContinue = new Array(data.employee_num).fill(0);;
-    var cntSugarDay = new Array(data.employee_num).fill(0);
-    var totalSugar = new Array(data.employee_num).fill(0);
+    var sugarContinue = new Array(data.employee_num);
+    var cntSugarDay = new Array(data.employee_num);
+    var totalSugar = new Array(data.employee_num);
+    for(var i = 0; i < data.employee_num; i++){
+        sugarContinue[i] = 0;
+        cntSugarDay[i] = 0;
+        totalSugar[i] = 0;
+    }
 
     for(var i = 0; i < data.daily_task.length; i++){
         for(var j = 0; j < data.employee_num; j++){
@@ -26,208 +31,21 @@ function caltotalSugar(data, dateToAsk){
             }
             eachPressureFactor.over_suager_day = sugarContinue[j];
 
-            var cnt_taskFinished = 0;
+            var taskUnfinished = 0;
             for(var k = 0; k < eachTask.task_detail.length; k++)
-                if(eachTask.task_detail[k].complete) 
-                    cnt_taskFinished++;
-            eachTask.complete_pa = (1 - cnt_taskFinished / eachTask.task_detail.length) * totalDay / (totalDay - dateDiff(dateToAsk, data.deadline));
-            alert(
-                "name = "+data.daily_task[i].each_task[j].name+
-              "\npa = " +   eachTask.complete_pa
-            );
+                if(!eachTask.task_detail[k].complete) 
+                    taskUnfinished += eachTask.task_detail[k].compress_rate;
+            eachTask.complete_pa = (taskUnfinished / eachTask.task_detail.length) * totalDay / (totalDay - dateDiff(dateToAsk, data.deadline));
         }
     }
 }
 
-var data = {   
-    "name": "project1",
-    "employee_num": 2,
-    "daily_task": [
-        {
-            "today": "2023/06/13",
-            "each_task":[
-                {
-                    "name": "a",
-                    "pressure_factor": {
-                        "is_nap": true,
-                        "is_foodout": true,
-                        "sugar": 3,
-                        "screen_worktime": 240,
-                        "makeup": -1
-                    },
-                    "task": {
-                        "is_meeting": true,
-                        "is_co_meeting": true,
-                        "task_detail": [
-                            {
-                                "name": "work",
-                                "complete": false
-                            },
-                            {
-                                "name": "work2",
-                                "complete": true
-                            },
-                            {
-                                "name": "work3",
-                                "complete": false
-                            }
-                        ]
-                    },
-                    "complete_pa": 10
-                },
-                {
-                    "name": "b",
-                    "pressure_factor": {
-                        "is_nap": true,
-                        "is_foodout": true,
-                        "sugar": 3,
-                        "screen_worktime": 240,
-                        "makeup": 1
-                    },
-                    "task": {
-                        "is_meeting": true,
-                        "is_co_meeting": false,
-                        "task_detail": [
-                            {
-                                "name": "work",
-                                "complete": false
-                            },
-                            {
-                                "name": "work2",
-                                "complete": false
-                            }
-                        ]
-                    },
-                    "complete_pa": 20
-                }
-            ]
-        },
-        {
-            "today": "2023/06/14",
-            "each_task":[
-                {
-                    "name": "a",
-                    "pressure_factor": {
-                        "is_nap": true,
-                        "is_foodout": true,
-                        "sugar": 3,
-                        "screen_worktime": 240,
-                        "makeup": -1
-                    },
-                    "task": {
-                        "is_meeting": true,
-                        "is_co_meeting": true,
-                        "task_detail": [
-                            {
-                                "name": "work",
-                                "complete": false
-                            },
-                            {
-                                "name": "work2",
-                                "complete": true
-                            },
-                            {
-                                "name": "work3",
-                                "complete": true
-                            }
-                        ]
-                    },
-                    "complete_pa": 20
-                },
-              {
-                    "name": "b",
-                    "pressure_factor": {
-                        "is_nap": true,
-                        "is_foodout": true,
-                        "sugar": 7,
-                        "screen_worktime": 250,
-                        "makeup": 1
-                    },
-                    "task": {
-                        "is_meeting": true,
-                        "is_co_meeting": false,
-                        "task_detail": [
-                            {
-                                "name": "work",
-                                "complete": false
-                            },
-                            {
-                                "name": "work2",
-                                "complete": false
-                            }
-                        ]
-                    },
-                    "complete_pa": 30
-                }
-            ]
-        },
-        {
-            "today": "2023/06/15",
-            "each_task":[
-                {
-                    "name": "a",
-                    "pressure_factor": {
-                        "is_nap": true,
-                        "is_foodout": true,
-                        "sugar": 8,
-                        "screen_worktime": 240,
-                        "makeup": -1
-                    },
-                    "task": {
-                        "is_meeting": true,
-                        "is_co_meeting": true,
-                        "task_detail": [
-                            {
-                                "name": "work",
-                                "complete": true
-                            },
-                            {
-                                "name": "work2",
-                                "complete": true
-                            },
-                            {
-                                "name": "work3",
-                                "complete": true
-                            }
-                        ]
-                    },
-                    "complete_pa": 20
-                },
-              {
-                    "name": "b",
-                    "pressure_factor": {
-                        "is_nap": true,
-                        "is_foodout": true,
-                        "sugar": 7,
-                        "screen_worktime": 250,
-                        "makeup": 1
-                    },
-                    "task": {
-                        "is_meeting": true,
-                        "is_co_meeting": false,
-                        "task_detail": [
-                            {
-                                "name": "work",
-                                "complete": false
-                            },
-                            {
-                                "name": "work2",
-                                "complete": true
-                            }
-                        ]
-                    },
-                    "complete_pa": 30
-                }
-            ]
-        }
-    ],
-    "start_date": "2023/06/13",
-    "deadline": "2023/06/16"
-};
+var ori_data = $(data);
+var data = ori_data[0].project;
 var editData = {};
-var dateToAsk = "2023/06/15";
+var dateToAsk = "2023/06/29";
 
-var sugarContinue = caltotalSugar(data, dateToAsk);
+caltotalSugar(data, dateToAsk);
 editData.stuff_num = data.employee_num;
 
 var eachData = [];
