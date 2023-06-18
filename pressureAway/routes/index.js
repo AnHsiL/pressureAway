@@ -6,9 +6,7 @@ myModules = new myModules();
 
 router.post('/setPersonalTask', myModules.setPersonalTask);
 router.post('/getAllData', myModules.getAllData);
-router.get('/getAllData', myModules.getAllData);
-router.post('/getSetData', myModules.getSetData);
-router.post('/getPressureScore', myModules.getPressureScore);
+router.post('/getAllPressureData', myModules.getAllPressureData);
 
 
 module.exports = router;

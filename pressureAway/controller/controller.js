@@ -35,62 +35,17 @@ module.exports = class Controller {
             res.err();
         }
     }
-    getSetData(req, res, next){
-        var employeeIdx = req.body.employeeIdx;
-        var dateToAsk = req.body.dateToAsk;
+    getAllPressureData(req, res, next){
 
         CRUD.readAllData()
         .then((r_data) => {
-            var data = r_data.project;
-            var personalPress = {};
-            var personalSched = {};
-
-            calData(dateToAsk, data, employeeIdx);
-
-            for(var i = 0; i < data.daily_task.length; i++){
-                if(data.daily_task[i].today == dateToAsk){
-                    var personalData = data.daily_task[i].each_task[employeeIdx];
-
-                    personalPress = {
-                        name : personalData.name,
-                        pressure_factor : {
-                            is_nap           : personalData.pressure_factor.is_nap,
-                            is_foodout       : personalData.pressure_factor.is_foodout,
-                            screen_worktime  : personalData.pressure_factor.screen_worktime,
-                            makeup           : personalData.pressure_factor.makeup,
-                            over_suager_day  : personalData.pressure_factor.over_suager_day,
-                            is_meeting       : personalData.task.is_meeting,
-                            is_co_meeting    : personalData.task.is_co_meeting,
-                            complete_pa      : personalData.task.complete_pa
-                        }
-                    };
-
-                    personalSched = {
-                        name : personalData.name,
-                        sched : personalData.task.task_detail
-                    };
-                }
-            }
+            var allPressStatusArr = allPressStatus(r_data.project);
 
             res.json({
-                personalPress : personalPress,
-                personalSched : personalSched
+                allPressStatusArr : allPressStatusArr
             });
         });
 
-    }
-    getPressureScore(req, res, next){
-        var data = req.body.personalPress;
-        var stuffStress;
-        
-        var score = PressureScore(data.pressure_factor);
-        if(score >= 66) stuffStress = 1;
-        else if(score <= 33) stuffStress = -1;
-        else stuffStress = 0;
-        
-        res.json({
-            personalScore: stuffStress
-        });
     }
 }
 
@@ -104,35 +59,76 @@ function dateDiff(Date1_, Date2_){
     return milliseconds_Time / (1000 * 3600 * 24);
 };
 
-function calData(dateToAsk, data, id){ 
-    var sugarContinue = 0;
-    var cntSugarDay = 0, totalSugar = 0;
-
+function allPressStatus(data){ 
     var totalDay = dateDiff(data.start_date, data.deadline);
-    var lastDay = dateDiff(dateToAsk, data.deadline);
+    var allPressData = [];
 
-    for(var i = 0; i < data.daily_task.length; i++){
-        var eachPressureFactor = data.daily_task[i].each_task[id].pressure_factor;
+    var stuff_num = data.employee_num;
 
-        if(eachPressureFactor.sugar - totalSugar / cntSugarDay >= 2)
-            sugarContinue += 1;
-        else {
-            sugarContinue = 0;
-            cntSugarDay++;
-            totalSugar += eachPressureFactor.sugar;
+    var sugarContinue   = new Array(stuff_num).fill(0);
+    var cntSugarDay     = new Array(stuff_num).fill(0);
+    var totalSugar      = new Array(stuff_num).fill(0);
+
+    for(var day = 0; day < data.daily_task.length; day++){
+        var lastDay = dateDiff(data.daily_task[day].today, data.deadline);
+
+        for(var stuff = 0; stuff < stuff_num; stuff++){
+            var eachPressureFactor = data.daily_task[day].each_task[stuff].pressure_factor;
+            if(eachPressureFactor.sugar - totalSugar[stuff] / cntSugarDay[stuff] >= 2){
+                sugarContinue[stuff] += 1;
+            }
+            else {
+                sugarContinue[stuff] = 0;
+                cntSugarDay[stuff]+=1;
+                totalSugar[stuff] += eachPressureFactor.sugar;
+            }
+            eachPressureFactor.over_suager_day = sugarContinue[stuff];
+            
+            var eachTask = data.daily_task[day].each_task[stuff].task;
+            var taskUnfinished = 0;
+            for(var k = 0; k < eachTask.task_detail.length; k++)
+                if(!eachTask.task_detail[k].complete) 
+                    taskUnfinished += eachTask.task_detail[k].compress_rate;
+            eachTask.complete_pa = 0;
+            if(taskUnfinished > 0)
+                eachTask.complete_pa = (taskUnfinished / eachTask.task_detail.length) * totalDay / lastDay;
+            else eachTask.complete_pa = 1;
         }
-        eachPressureFactor.over_suager_day = sugarContinue;
-
-        var eachTask = data.daily_task[i].each_task[id].task;
-        var taskUnfinished = 0;
-        for(var k = 0; k < eachTask.task_detail.length; k++)
-            if(!eachTask.task_detail[k].complete) 
-                taskUnfinished += eachTask.task_detail[k].compress_rate;
-        eachTask.complete_pa = 0;
-        if(taskUnfinished > 0)
-            eachTask.complete_pa = (taskUnfinished / eachTask.task_detail.length) * totalDay / lastDay;
-        else eachTask.complete_pa = 1;
     }
+    
+    for(var day = 0; day < data.daily_task.length; day++){
+        var dailyPressData_pressArr = [];
+
+        for(var stuff = 0; stuff < stuff_num; stuff++){
+            var personalData = data.daily_task[day].each_task[stuff];
+
+            var personalPress = {
+                name : personalData.name,
+                pressure_factor : {
+                    is_nap           : personalData.pressure_factor.is_nap,
+                    is_foodout       : personalData.pressure_factor.is_foodout,
+                    screen_worktime  : personalData.pressure_factor.screen_worktime,
+                    makeup           : personalData.pressure_factor.makeup,
+                    over_suager_day  : personalData.pressure_factor.over_suager_day,
+                    is_meeting       : personalData.task.is_meeting,
+                    is_co_meeting    : personalData.task.is_co_meeting,
+                    complete_pa      : personalData.task.complete_pa
+                }
+            };
+
+            var score = PressureScore(personalPress.pressure_factor);
+            if(score >= 66) dailyPressData_pressArr.push(1);
+            else if(score <= 33) dailyPressData_pressArr.push(-1);
+            else dailyPressData_pressArr.push(0);
+        }
+
+        var dailyPressData = {
+            date: data.daily_task[day].today,
+            pressArr : dailyPressData_pressArr
+        };
+        allPressData.push(dailyPressData)
+    }
+    return allPressData;
 };
 
 function PressureScore(pressureFactor){
@@ -157,7 +153,6 @@ function PressureScore(pressureFactor){
         if (pressureFactor.makeup == 0)  score += 5;
         else if (pressureFactor.makeup == 5) score += 3;
     }
-  
     if(pressureFactor.is_nap) score += nap_weight;
     if(pressureFactor.is_foodout) score += foodout_weight;
     if(pressureFactor.over_suager_day >= 3) score += suager_weight*1.3;
@@ -174,6 +169,7 @@ function PressureScore(pressureFactor){
         screenTime = pressureFactor.screen_worktime / (3*60);
     }
     score += screenTime * screen_weight;
+
     if(pressureFactor.complete_pa > 10) score += 1.2 * complete_weight;
     else if(pressureFactor.complete_pa > 5) score += 1.1 * complete_weight;
     else if(pressureFactor.complete_pa > 3) score += complete_weight;
