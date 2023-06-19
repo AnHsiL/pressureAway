@@ -49,7 +49,7 @@ module.exports = class CRUD {
         }
     }
     static async setIsChange(is_toChange_status) {
-        var path = "/project";
+        var path = "/project/isChanged";
         try {
             db.ref(path).set('');
             db.ref(path).set(is_toChange_status);
