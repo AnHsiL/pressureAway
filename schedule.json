@@ -1,0 +1,73 @@
+{
+    "project": {
+        "name": "project1",
+        "employee_num": 2,
+        "ischanged": false,
+        "start_date": "2023/06/01",
+        "deadline": "2023/06/02",
+        "daily_task": [
+            {
+                "today": "2023/06/01",
+                "employee": [
+                    {
+                        "name": "Alex",
+                        "pressure_factor": {
+                            "is_nap": false,
+                            "is_foodout": true,
+                            "sugar": 5,
+                            "screen_worktime": 92,
+                            "makeup": -1
+                        },
+                        "is_meeting": false,
+                        "is_co_meeting": true,
+                        "task": "work1"
+                    },
+                    {
+                        "name": "Ben",
+                        "pressure_factor": {
+                            "is_nap": false,
+                            "is_foodout": true,
+                            "sugar": 5,
+                            "screen_worktime": 100,
+                            "makeup": -1
+                        },
+                        "is_meeting": false,
+                        "is_co_meeting": true,
+                        "task": "work1"
+                    }
+                ]
+            },
+            {
+                "today": "2023/06/02",
+                "employee": [
+                    {
+                        "name": "Alex",
+                        "pressure_factor": {
+                            "is_nap": false,
+                            "is_foodout": true,
+                            "sugar": 5,
+                            "screen_worktime": 92,
+                            "makeup": -1
+                        },
+                        "is_meeting": false,
+                        "is_co_meeting": true,
+                        "task": "work1"
+                    },
+                    {
+                        "name": "Ben",
+                        "pressure_factor": {
+                            "is_nap": false,
+                            "is_foodout": true,
+                            "sugar": 5,
+                            "screen_worktime": 100,
+                            "makeup": -1
+                        },
+                        "is_meeting": false,
+                        "is_co_meeting": true,
+                        "task": "work1"
+                    }
+                ]
+            }
+        ]
+    }
+}
