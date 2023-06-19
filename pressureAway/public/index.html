@@ -11,23 +11,41 @@
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.0/jquery.min.js"></script>
     <script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@10"></script>
-    <script type="module" src="./javascripts/index.js"></script>
+    <link rel="stylesheet" type="text/css" href="https://docs.dhtmlx.com/gantt/codebase/dhtmlxgantt.css">
+    <script src="https://docs.dhtmlx.com/gantt/codebase/dhtmlxgantt.js?v=6.1.7"></script>
 </head>
 
 <body>
     <h1>welcome to pressure away</h1>
     <b>hello world~</b>
-    
+
     <p id="all_data">nop</p>
     <br>
     <button id="btn_get" class="btn-orange-outline">get Data</button>
     <br><br>
-    <span><div>date</div><input id="input_date" type="date" ></span><br>
-    <span><div>name</div><input id="input_name" ></span><br>
-    <span><div>date</div><input id="input_dataToChange" placeholder="array[]"></span><br>
+    <span>
+        <div>date</div><input id="input_date" type="date">
+    </span><br>
+    <span>
+        <div>name</div><input id="input_name">
+    </span><br>
+    <span>
+        <div>date</div><input id="input_dataToChange" placeholder="array[]">
+    </span><br>
     <br>
     <button id="btn_set" class="btn-orange">set Data</button>
 
+    <br>
+    <br>
+    <div id="gantt_here" style='width:100%; height:100vh;'></div>
+
 </body>
+
+<script>
+    gantt.config.xml_date = "%Y-%m-%d %H:%i:%s";
+    gantt.init("gantt_here");
+    gantt.load("./data/data.json");
+
+</script>
 
 </html>
