@@ -9,6 +9,23 @@ var changedaily_task_ = {};
 var move = [];
 var move_detail = {};
 var move_num = [];
+var web = [];
+var web_ = {};
+var test = [];
+var task_move = [];
+var task_move_ = {};
+var web_be = [];
+var web_en = [];
+var task_move_re = [];
+for (var i = 0; i < Alldata.employee_num; i++) {
+    move[i] = [];
+    web[i] = [];
+    web_be[i] = 0;
+    web_en[i] = 0;
+    move_num[i] = 0;
+    task_move[i] = [];
+    task_move_re[i] = [];
+}
 for (var i = 0; i < Alldata.daily_task.length; i++) {
     var change_each_task = [];
     var change_each_task_ = {};
@@ -18,63 +35,71 @@ for (var i = 0; i < Alldata.daily_task.length; i++) {
         var count_ = 0;
         for (var k = Alldata.daily_task[i].each_task[j].task.task_detail.length - 1; k >= 0; --k) {
             var check = 0;
+            for (var l = 0; l < move_num[j]; ++l) {
+                if (move[j][l].task_detail.name == Alldata.daily_task[i].each_task[j].task.task_detail[k].name && move[j][l].name == Alldata.daily_task[i].each_task[j].name) {
+                    check = 1;
+                    break;
+                }
+            }
+            test.push(allPressStatusArr[i].pressArr[j] == 1);
             if (allPressStatusArr[i].pressArr[j] == 1 && Alldata.daily_task.length - i > 2) {
-                if (Alldata.daily_task[i].each_task[j].task.task_detail[k].complete == false && count_ < 2) {
+                if (Alldata.daily_task[i].each_task[j].task.task_detail[k].complete == false && count_ < 2 && check != 1) {
                     move_detail.task_detail = JSON.parse(JSON.stringify(Alldata.daily_task[i].each_task[j].task.task_detail[k]));
                     move_detail.name = JSON.parse(JSON.stringify(Alldata.daily_task[i].each_task[j].name));
-                    move_detail.date = i;
-                    move[j] = push(move_detail);
+                    move_detail.date = JSON.parse(JSON.stringify(Alldata.daily_task[i].today));
+                    move[j].push(JSON.parse(JSON.stringify(move_detail)));
                     move_num[j]++;
                     count_++;
+                    task_move_.name = JSON.parse(JSON.stringify(Alldata.daily_task[i].each_task[j].task.task_detail[k].name));
+                    task_move_.move_begin = JSON.parse(JSON.stringify(Alldata.daily_task[i].today));
+                    task_move_.move_end = "";
+                    task_move[j].push(JSON.parse(JSON.stringify(task_move_)));
+                    task_move_re[j].push(JSON.parse(JSON.stringify(task_move_)));
+                    web_.task_move = JSON.parse(JSON.stringify(task_move_re[j]));
+                    web_.name = JSON.parse(JSON.stringify(Alldata.daily_task[i].each_task[j].name));
+
+                    web[j] = JSON.parse(JSON.stringify(web_));
                 }
                 else {
-                    for (var l = 0; l < move_num[j]; ++l) {
-                        if (move[j][l].task_detail[k].name == Alldata.daily_task[i].each_task[j].task.task_detail[k].name) {
-                            check = 1;
-                            break;
-                        }
-                    }
                     if (check != 1)
                         change_task_detail[k] = JSON.parse(JSON.stringify(Alldata.daily_task[i].each_task[j].task.task_detail[k]));
                 }
             }
             else {
-                for (var l = 0; l < move_num[j]; ++l) {
-                    if (move[j][l].task_detail[k].name == Alldata.daily_task[i].each_task[j].task.task_detail[k].name) {
-                        check = 1;
-                        break;
-                    }
-                }
                 if (check != 1)
                     change_task_detail[k] = JSON.parse(JSON.stringify(Alldata.daily_task[i].each_task[j].task.task_detail[k]));
             }
         }
-        if (allPressStatusArr[i].pressArr[j] == 0 && move_num[j] != 0) {
-            change_task_detail = push(JSON.parse(JSON.stringify(move[j][move_num[j] - 1])));
+        if (allPressStatusArr[i].pressArr[j] == 0 && move_num[j] > 0) {
+            change_task_detail.push(JSON.parse(JSON.stringify(move[j][move_num[j] - 1])));
             move_num[j]--;
-            var x = move[j].splice(move_num[j], 1);
+            web[j].task_move[web_be[j]].move_end = JSON.parse(JSON.stringify(Alldata.daily_task[i].today));
+            web_be[j]++;
         }
         if (allPressStatusArr[i].pressArr[j] == -1 && move_num[j] > 0) {
             if (move_num[j] > 1) {
-                change_task_detail = push(JSON.parse(JSON.stringify(move[j][move_num[j] - 1])));
+                change_task_detail.push(JSON.parse(JSON.stringify(move[j][move_num[j] - 1])));
                 move_num[j]--;
-                var x = move[j].splice(move_num[j], 1);
-                change_task_detail = push(JSON.parse(JSON.stringify(move[j][move_num[j] - 1])));
+                web[j].task_move[web_be[j]].move_end = JSON.parse(JSON.stringify(Alldata.daily_task[i].today));
+                web_be[j]++;
+                change_task_detail.push(JSON.parse(JSON.stringify(move[j][move_num[j] - 1])));
                 move_num[j]--;
-                var x = move[j].splice(move_num[j], 1);
+                web[j].task_move[web_be[j]].move_end = JSON.parse(JSON.stringify(Alldata.daily_task[i].today));
+                web_be[j]++;
             }
             else {
-                change_task_detail = push(JSON.parse(JSON.stringify(move[j][move_num[j] - 1])));
+                change_task_detail.push(JSON.parse(JSON.stringify(move[j][move_num[j] - 1])));
                 move_num[j]--;
-                var x = move[j].splice(move_num[j], 1);
+                web[j].task_move[web_be[j]].move_end = JSON.parse(JSON.stringify(Alldata.daily_task[i].today));
+                web_be[j]++;
             }
         }
-        if (i == Alldata.daily_task.length - 2) {
-            for (var k = 0; k < Alldata.employee_num; k++) {
-                while (move_num[k]--) {
-                    change_task_detail = push(JSON.parse(JSON.stringify(move[k][move_num[k]])));
-                    var x = move[k].splice(move_num[k], 1);
-                }
+        if (i == Alldata.daily_task.length - 1) {
+            while (move_num[j] > 0) {
+                change_task_detail.push(JSON.parse(JSON.stringify(move[j][move_num[j] - 1])));
+                move_num[j]--;
+                web[j].task_move[web_be[j]].move_end = JSON.parse(JSON.stringify(Alldata.daily_task[i].today));
+                web_be[j]++;
             }
         }
         change_task.task_detail = JSON.parse(JSON.stringify(change_task_detail));
@@ -87,10 +112,15 @@ for (var i = 0; i < Alldata.daily_task.length; i++) {
 }
 All.d = JSON.parse(JSON.stringify(changedaily_task));
 
+
+
+
 return {
     "success": true,
     "processVariable": {
-        "data": All.d
+        "AllEditTask": web,
+        "newSched": All.d,
+        "test": test
     },
     "errorMessage": ""
 };
