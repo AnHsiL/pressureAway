@@ -4,6 +4,12 @@ var allPressStatusArr = $(allPressStatusArr);
 
 var Alldata = response.project;
 var All = {};
+var ALL = {};
+All.name = Alldata.name;
+All.employee_num = Alldata.employee_num;
+All.start_date = Alldata.start_date;
+All.deadline = Alldata.deadline;
+All.ischanged = true;
 var changedaily_task = [];
 var changedaily_task_ = {};
 var move = [];
@@ -14,6 +20,9 @@ var web_ = {};
 var test = [];
 var task_move = [];
 var task_move_ = {};
+var AllDairyTask = [];
+var AllDairyTask_ = {};
+
 var web_be = [];
 var web_en = [];
 var task_move_re = [];
@@ -69,6 +78,7 @@ for (var i = 0; i < Alldata.daily_task.length; i++) {
                 if (check != 1)
                     change_task_detail[k] = JSON.parse(JSON.stringify(Alldata.daily_task[i].each_task[j].task.task_detail[k]));
             }
+
         }
         if (allPressStatusArr[i].pressArr[j] == 0 && move_num[j] > 0) {
             change_task_detail.push(JSON.parse(JSON.stringify(move[j][move_num[j] - 1])));
@@ -103,15 +113,19 @@ for (var i = 0; i < Alldata.daily_task.length; i++) {
             }
         }
         change_task.task_detail = JSON.parse(JSON.stringify(change_task_detail));
+        change_task.is_meeting = Alldata.daily_task[i].each_task[j].task.is_meeting;
+        change_task.is_co_meeting = Alldata.daily_task[i].each_task[j].task.is_co_meeting;
         change_each_task_.name = JSON.parse(JSON.stringify(Alldata.daily_task[i].each_task[j].name));
         change_each_task_.task = JSON.parse(JSON.stringify(change_task));
+        change_each_task_.pressure_factor = JSON.parse(JSON.stringify(Alldata.daily_task[i].each_task[j].pressure_factor));
         change_each_task[j] = JSON.parse(JSON.stringify(change_each_task_));
     }
     changedaily_task_.each_task = JSON.parse(JSON.stringify(change_each_task));
+    changedaily_task_.today = Alldata.daily_task[i].today;
     changedaily_task[i] = JSON.parse(JSON.stringify(changedaily_task_));
 }
-All.d = JSON.parse(JSON.stringify(changedaily_task));
-
+All.daily_task = JSON.parse(JSON.stringify(changedaily_task));
+ALL.project = JSON.parse(JSON.stringify(All));
 
 
 
@@ -119,8 +133,7 @@ return {
     "success": true,
     "processVariable": {
         "AllEditTask": web,
-        "newSched": All.d,
-        "test": test
+        "newSched": ALL,
     },
     "errorMessage": ""
 };
