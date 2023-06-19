@@ -15,8 +15,8 @@
         "data": {
         "prompt": [
             {
-            "role": "system",
-            "content": "「"+ context +"」建議該選購何種方便食用的零食來減輕壓力？請簡潔歸納出重點"
+                "role": "system",
+                "content": "「"+ context +"」建議該選購何種方便食用的零食來減輕壓力？請簡潔歸納出重點"
             }
         ],
         "temperature": 0.7,

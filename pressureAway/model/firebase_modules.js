@@ -48,5 +48,14 @@ module.exports = class CRUD {
             console.error("Error reading document: ", e);
         }
     }
+    static async setIsChange(is_toChange_status) {
+        var path = "/project";
+        try {
+            db.ref(path).set('');
+            db.ref(path).set(is_toChange_status);
+        } catch (e) {
+            console.error("Error reading document: ", e);
+        }
+    }
     
 }

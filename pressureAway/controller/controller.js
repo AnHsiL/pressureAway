@@ -47,6 +47,30 @@ module.exports = class Controller {
         });
 
     }
+    toUnchangedStatus(req, res, next) {
+        try {
+            CRUD.setIsChange(false)
+                .then(() => {
+                    res.json({
+                        status: "succ",
+                    });
+                });
+        } catch (err) {
+            res.err();
+        }
+    }
+    toChangedStatus(req, res, next) {
+        try {
+            CRUD.setIsChange(true)
+                .then(() => {
+                    res.json({
+                        status: "succ",
+                    });
+                });
+        } catch (err) {
+            res.err();
+        }
+    }
 }
 
 function dateDiff(Date1_, Date2_){ 
