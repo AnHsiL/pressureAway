@@ -49,11 +49,9 @@ module.exports = class CRUD {
         }
     }
     static async setNewSched(newData) {
-        var path = "/";
 
         try {
-            db.ref(path).set('');
-            db.ref(path).set(newData);
+            db.ref().set(newData);
         } catch (e) {
             console.error("Error reading document: ", e);
         }
