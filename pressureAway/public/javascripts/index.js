@@ -215,7 +215,7 @@ function getPressureScore() {
         type: "POST",
         data: data,
         success: function (res) {
-            document.getElementById("btn_pressure").innerText = res.avg_pressScore;
+            document.getElementById("btn_pressure").innerText = "Pressure Score" + res.avg_pressScore;
         },
         error: function (err) {
             swal.fire({
