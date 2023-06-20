@@ -105,7 +105,7 @@ function getNewSched() { // page 2
         url: "/getAllData",
         type: "POST",
         success: function (res) {
-            document.getElementById("all_data").innerHTML = JSON.stringify(formatSched(res));
+            document.getElementById("all_data").innerHTML = JSON.stringify(res);
         },
         error: function (err) {
             swal.fire({

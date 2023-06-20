@@ -83,7 +83,7 @@ module.exports = class Controller {
         CRUD.readAllData()
             .then((r_data) => {
                 var allPressStatusArr = allPressStatus(r_data.project);
-                var newSched = newSch(r_data.project, allPressStatusArr);
+                var newSched = formatSched(newSch(r_data.project, allPressStatusArr));
                 res.json({
                     newSched: newSched
                 });
