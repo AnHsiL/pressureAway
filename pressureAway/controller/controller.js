@@ -125,7 +125,7 @@ module.exports = class Controller {
                 res.json(newSched);
             });
     }
-    getIsChanged(req, res, next){
+    getIsChanged(req, res, next) {
         try {
             CRUD.readIsChanged()
                 .then((data) => {
@@ -376,6 +376,7 @@ function newSch(Alldata, allPressStatusArr) {
     var web_en = [];
     var task_move_re = [];
     var check = 0;
+    var times = 0;
     for (var i = 0; i < Alldata.employee_num; i++) {
         move[i] = [];
         web[i] = [];
@@ -397,11 +398,11 @@ function newSch(Alldata, allPressStatusArr) {
             if (Alldata.daily_task[i].employee[j].task) {
                 for (var k = Alldata.daily_task[i].employee[j].task.length - 1; k >= 0; --k) {
                     for (var l = 0; l < task_move[j].length; ++l) {
-                        if (Alldata.daily_task[i].employee[j].task[k] == task_move[j][l].name) {
+                        if (move[j][l].name == Alldata.daily_task[i].employee[j].task[k]) {
                             check = 1;
                         }
                     }
-                    if (allPressStatusArr[i].pressArr[j] > 60 && Alldata.daily_task.length - i > 2 && k > 1 && check != 1) {
+                    if (allPressStatusArr[i].pressArr[j] > 60 && Alldata.daily_task.length - i > 9 && k > 1 && check != 1) {
                         if (count_ < 2) {
 
                             move[j].push(JSON.parse(JSON.stringify(JSON.stringify(Alldata.daily_task[i].employee[j].task[k]))));
@@ -409,9 +410,12 @@ function newSch(Alldata, allPressStatusArr) {
                             count_++;
                             task_move_.name = JSON.parse(JSON.stringify(Alldata.daily_task[i].employee[j].task[k]));
                             task_move_.move_begin = JSON.parse(JSON.stringify(Alldata.daily_task[i].today));
-                            task_move_.move_end = "";
-                            test.push(JSON.parse(JSON.stringify(Alldata.daily_task[i].employee[j].name)));
-                            test.push(JSON.parse(JSON.stringify(task_move_)));
+                            var x = [Math.floor(Math.random() * 10)]
+                            y = ["20230621", "20230622", "20230623", "20230624", "20230625", "20230626", "20230627", "20230628", "20230629", "20230630"];
+                            task_move_.move_end = y[x];
+                            test.push(y[x]);
+                            test.push(j);
+                            test.push(Alldata.daily_task[i].employee[j].task[k]);
                             task_move[j].push(JSON.parse(JSON.stringify(task_move_)));
                             task_move_re[j].push(JSON.parse(JSON.stringify(task_move_)));
                             web_.task_move = JSON.parse(JSON.stringify(task_move_re[j]));
@@ -423,48 +427,68 @@ function newSch(Alldata, allPressStatusArr) {
                             web[j] = JSON.parse(JSON.stringify(web_));
                         }
                         else {
-                            change_task_detail[k] = JSON.parse(JSON.stringify(Alldata.daily_task[i].employee[j].task[k]));
+                            if (check != 1)
+                                change_task_detail[k] = JSON.parse(JSON.stringify(Alldata.daily_task[i].employee[j].task[k]));
                         }
                     }
                     else {
-                        change_task_detail[k] = JSON.parse(JSON.stringify(Alldata.daily_task[i].employee[j].task[k]));
+                        if (check != 1)
+                            change_task_detail[k] = JSON.parse(JSON.stringify(Alldata.daily_task[i].employee[j].task[k]));
                     }
                 }
             }
-            if (allPressStatusArr[i].pressArr[j] > 29 && move_num[j] > 0 && web[j].task_move[web_be[j]] != i && check != 1 && allPressStatusArr[i].pressArr[j] < 60) {
-                test.push(web[j].task_move[web_be[j]]);
-                test.push(0);
-                change_task_detail.push(JSON.parse(JSON.stringify(move[j][move_num[j] - 1])));
-                move_num[j]--;
-                web[j].task_move[web_be[j]].move_end = JSON.parse(JSON.stringify(Alldata.daily_task[i].today));
-                web_be[j]++;
-            }
-            if (allPressStatusArr[i].pressArr[j] < 29 && move_num[j] > 0 && check != 1 && web[j].task_move[web_be[j]] != i) {
-                if (move_num[j] > 1) {
-                    change_task_detail.push(JSON.parse(JSON.stringify(move[j][move_num[j] - 1])));
-                    move_num[j]--;
-                    web[j].task_move[web_be[j]].move_end = JSON.parse(JSON.stringify(Alldata.daily_task[i].today));
-                    web_be[j]++;
-                    change_task_detail.push(JSON.parse(JSON.stringify(move[j][move_num[j] - 1])));
-                    move_num[j]--;
-                    web[j].task_move[web_be[j]].move_end = JSON.parse(JSON.stringify(Alldata.daily_task[i].today));
-                    web_be[j]++;
-                }
-                else {
-                    change_task_detail.push(JSON.parse(JSON.stringify(move[j][move_num[j] - 1])));
-                    move_num[j]--;
-                    web[j].task_move[web_be[j]].move_end = JSON.parse(JSON.stringify(Alldata.daily_task[i].today));
-                    web_be[j]++;
-                }
-            }
-            if (i == Alldata.daily_task.length - 1) {
-                while (move_num[j] > 0) {
-                    change_task_detail.push(JSON.parse(JSON.stringify(move[j][move_num[j] - 1])));
-                    move_num[j]--;
-                    web[j].task_move[web_be[j]].move_end = JSON.parse(JSON.stringify(Alldata.daily_task[i].today));
-                    web_be[j]++;
-                }
-            }
+
+            //check = 0;
+            //     if (times > 1)
+            //         break;
+            //for (var k = 0; k < Alldata.daily_task[i].employee[j].task.length; ++k) {
+            //    if (move[j][move_num[j] - 1] == Alldata.daily_task[i].employee[j].task[k]) {
+            //         check = 1;
+            //    }
+            //}
+            //if (check != 1) {
+            //    change_task_detail.push(JSON.parse(JSON.stringify(move[j][move_num[j] - 1])));
+            //    move_num[j]--;
+            //    web[j].task_move[web_be[j]].move_end = JSON.parse(JSON.stringify(Alldata.daily_task[i].today));
+            //     web_be[j]++;
+            // }
+            //     if (allPressStatusArr[i].pressArr[j] > 29 && check != 1 && allPressStatusArr[i].pressArr[j] < 60) {
+            //         test.push(web[j].task_move[web_be[j]]);
+            //         test.push(0);
+            //         change_task_detail.push(JSON.parse(JSON.stringify(move[j][l])));
+            //         move_num[j]--;
+            //         web[j].task_move[web_be[j]].move_end = JSON.parse(JSON.stringify(Alldata.daily_task[i].today));
+            //         web_be[j]++;
+            //         times++;
+            //     }
+            //     if (allPressStatusArr[i].pressArr[j] < 29 && move_num[j] > 0 && check != 1 && web[j].task_move[web_be[j]] != i) {
+            //         if (move_num[j] > 1) {
+            //             change_task_detail.push(JSON.parse(JSON.stringify(move[j][l])));
+            //             move_num[j]--;
+            //             web[j].task_move[web_be[j]].move_end = JSON.parse(JSON.stringify(Alldata.daily_task[i].today));
+            //             web_be[j]++;
+            //             change_task_detail.push(JSON.parse(JSON.stringify(move[j][l])));
+            //             move_num[j]--;
+            //             web[j].task_move[web_be[j]].move_end = JSON.parse(JSON.stringify(Alldata.daily_task[i].today));
+            //             web_be[j]++;
+            //             times++;
+            //         }
+            //         else {
+            //             change_task_detail.push(JSON.parse(JSON.stringify(move[j][l])));
+            //             move_num[j]--;
+            //             web[j].task_move[web_be[j]].move_end = JSON.parse(JSON.stringify(Alldata.daily_task[i].today));
+            //             web_be[j]++;
+            //             times++;
+            //         }
+            //     }
+            // if (i == Alldata.daily_task.length - 1) {
+            //     while (move_num[j] > 0) {
+            //         change_task_detail.push(JSON.parse(JSON.stringify(move[j][move_num[j] - 1])));
+            //         move_num[j]--;
+            //         web[j].task_move[web_be[j]].move_end = JSON.parse(JSON.stringify(Alldata.daily_task[i].today));
+            //         web_be[j]++;
+            //     }
+            // }
             change_task = JSON.parse(JSON.stringify(change_task_detail));
             change_employee_.is_meeting = Alldata.daily_task[i].employee[j].is_meeting;
             change_employee_.is_co_meeting = Alldata.daily_task[i].employee[j].is_co_meeting;
@@ -479,6 +503,13 @@ function newSch(Alldata, allPressStatusArr) {
     }
     All.daily_task = JSON.parse(JSON.stringify(changedaily_task));
     ALL.project = JSON.parse(JSON.stringify(All));
-
+    for (var z = 0; z < test.length; z += 3) {
+        for (var i = 0; i < 30; ++i) {
+            if (test[z] == Alldata.daily_task[i].today) {
+                ALL.project.daily_task[i].employee[test[z + 1]].task.push(test[z + 2]);
+            }
+        }
+    }
+    //ALL.test = test;
     return ALL;
 }
