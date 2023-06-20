@@ -166,10 +166,9 @@ function allPressStatus(data) {
 
             var eachTask = data.daily_task[day].employee[stuff].task;
             var taskUnfinished = 0;
-            if (eachTask) {
+            if(eachTask) 
                 for (var k = 0; k < eachTask.length; k++)
                     taskUnfinished++;
-            }
             data.daily_task[day].employee[stuff].complete_pa = 0;
             if (taskUnfinished > 0)
                 data.daily_task[day].employee[stuff].complete_pa = (taskUnfinished / eachTask.length) * totalDay / lastDay;
