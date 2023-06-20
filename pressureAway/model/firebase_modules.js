@@ -1,4 +1,4 @@
-const { getDatabase} =  require ("firebase-admin/database");
+const { getDatabase } = require("firebase-admin/database");
 var admin = require("firebase-admin");
 var serviceAccount = require("../credential/project-e2d9c-firebase-adminsdk-a9h8w-d65bce6dfe.json");
 
@@ -27,7 +27,7 @@ module.exports = class CRUD {
     static async readAllData() {
         try {
             return new Promise((resolve) => {
-                db.ref('/').on('value',e => {
+                db.ref('/').on('value', e => {
                     resolve(e.val());
                 });
             });
@@ -36,9 +36,9 @@ module.exports = class CRUD {
             console.error("Error reading document: ", e);
         }
     }
-    
+
     static async setPersonalTask(daily_task_idx, each_task_idx, newData) {
-        var path = "/project/daily_task/"+ daily_task_idx + "/each_task/"+ each_task_idx +"/task/task_detail";
+        var path = "/project/daily_task/" + daily_task_idx + "/each_task/" + each_task_idx + "/task/task_detail";
         console.log(path);
 
         try {
@@ -48,5 +48,5 @@ module.exports = class CRUD {
             console.error("Error reading document: ", e);
         }
     }
-    
+
 }

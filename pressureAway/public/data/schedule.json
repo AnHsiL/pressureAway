@@ -1,0 +1,45 @@
+{
+  "data": [
+    {
+      "id": 1,
+      "text": "Project #1",
+      "open": true,
+      "type": "project"
+    },
+    {
+      "id": 2,
+      "text": "p #2",
+      "open": true,
+      "type": "project"
+    },
+    {
+      "id": 11,
+      "text": "zzz",
+      "start_date": "18-06-2023",
+      "duration": 2,
+      "parent": 1
+    },
+    {
+      "id": 21,
+      "text": "aaa",
+      "start_date": "25-06-2023",
+      "duration": 8,
+      "parent": 2
+    },
+    {
+      "id": 5,
+      "text": "Task #3",
+      "start_date": "02-07-2023",
+      "duration": 8,
+      "parent": 1
+    }
+  ],
+  "links": [
+    {
+      "id": 1,
+      "source": 2,
+      "target": 3,
+      "type": "0"
+    }
+  ]
+}

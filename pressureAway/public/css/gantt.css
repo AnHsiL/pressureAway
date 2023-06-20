@@ -1,0 +1,24 @@
+.gantt_tree_content {
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.today {
+  background: #aaf6f8 !important;
+}
+
+.weekends {
+  background: #F0DFE5 !important;
+}
+
+.today_line {
+  background-color: #a30a0a;
+}
+
+h1 {
+  text-align: center;
+  padding-top: 50px;
+  font-size: 50px;
+  font-weight: bold;
+  color: #FFA500;
+}
