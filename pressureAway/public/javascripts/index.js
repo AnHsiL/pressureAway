@@ -173,3 +173,27 @@ function setNewSchedData(dataToChange) {
         }
     });
 }
+function getNewSchedSub(dataToChange) {
+
+    var data = {
+        dataToChange: dataToChange
+    };
+
+    $.ajax({
+        url: "/getNewSchedSub",
+        type: "POST",
+        data: data,
+        success: function (res) {
+            document.getElementById("all_data").innerHTML = JSON.stringify(res);
+        },
+        error: function (err) {
+            swal.fire({
+                title: "Error",
+                text: err,
+                icon: "error",
+            }).then(() => {
+                location.reload();
+            });
+        }
+    });
+}

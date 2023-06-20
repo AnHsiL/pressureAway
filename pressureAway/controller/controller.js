@@ -17,8 +17,8 @@ module.exports = class Controller {
                 .then((r_data) => {
                     // console.log(r_data.project)
                     var allPressStatusArr = allPressStatus(r_data.project);
+                    //var newSched = newSch(r_data.project, allPressStatusArr);
                     var newSched = newSch(r_data.project, allPressStatusArr);
-                    // var newSched = newSch(r_data.project, allPressStatusArr);
                     CRUD.setNewSched(newSched)
                         .then(() => {
                             res.json({
@@ -62,6 +62,18 @@ module.exports = class Controller {
                 var allPressStatusArr = allPressStatus(r_data.project);
                 res.json({
                     allPressStatusArr: allPressStatusArr
+                });
+            });
+
+    }
+    getNewSchedSub(req, res, next) {
+
+        CRUD.readAllData()
+            .then((r_data) => {
+                var allPressStatusArr = allPressStatus(r_data.project);
+                var getNewSchedSub = getNewSchedSubFun(r_data.project, allPressStatusArr);
+                res.json({
+                    getNewSchedSub: getNewSchedSub
                 });
             });
 
@@ -351,165 +363,283 @@ function formatSched(sched) {
     }
     return finalData;
 }
-
-function newSch(Alldata, allPressStatusArr) {
+function getNewSchedSubFun(Alldata, allPressStatusArr) {
+    var arr = [];
+    var arr_ = {};
+    var re_arr = [];
+    var count_day = [];
+    var count;
+    var test2 = [];
+    var check2;
+    var check3;
+    var place = 0;
     var All = {};
-    var ALL = {};
-    All.name = Alldata.name;
-    All.employee_num = Alldata.employee_num;
-    All.start_date = Alldata.start_date;
-    All.deadline = Alldata.deadline;
-    All.isChanged = true;
-    var changedaily_task = [];
-    var changedaily_task_ = {};
-    var move = [];
-    var move_detail = {};
-    var move_num = [];
-    var web = [];
-    var web_ = {};
-    var test = [];
-    var task_move = [];
-    var task_move_ = {};
-    var edit = [];
-    var edit_ch = [];
-    var web_be = [];
-    var web_en = [];
-    var task_move_re = [];
-    var check = 0;
-    var times = 0;
-    for (var i = 0; i < Alldata.employee_num; i++) {
-        move[i] = [];
-        web[i] = [];
-        web_be[i] = 0;
-        web_en[i] = 0;
-        move_num[i] = 0;
-        task_move[i] = [];
-        task_move_re[i] = [];
-        edit_ch[i] = 0;
+    var Allproject = {};
+    for (var i = 0; i < Alldata.employee_num; ++i) {
+        re_arr[i] = [];
     }
-    for (var i = 0; i < Alldata.daily_task.length; i++) {
-        var change_employee = [];
-        var change_employee_ = {};
-        for (var j = 0; j < Alldata.daily_task[i].employee.length; ++j) {
-            check = 0;
-            var change_task = [];
-            var change_task_detail = [];
-            var count_ = 0;
-            if (Alldata.daily_task[i].employee[j].task) {
-                for (var k = Alldata.daily_task[i].employee[j].task.length - 1; k >= 0; --k) {
-                    for (var l = 0; l < task_move[j].length; ++l) {
-                        if (move[j][l].name == Alldata.daily_task[i].employee[j].task[k]) {
-                            check = 1;
+    for (var i = 0; i < 10; i++) {
+        var b = [];
+        for (var j = 0; j < 100; j++) {
+            b[j] = 0;
+        }
+        count_day[i] = b;
+    }
+
+    for (var i = 0; i < Alldata.employee_num; ++i) {
+        for (var j = 0; j < Alldata.daily_task.length; ++j) {
+            if (allPressStatusArr[j].pressArr[i] > 60 && count_day[i][j] < 2) {
+                if (Alldata.daily_task[j].employee[i].task) {
+                    count = 0;
+                    for (var k = 0; k < Alldata.daily_task[j].employee[i].task.length; ++k) {
+                        if (count > 1) {
+                            break;
+                        }
+                        work = Alldata.daily_task[j].employee[i].task[k];
+                        for (var l = j; l < Alldata.daily_task.length; ++l) {
+                            var check = 0;
+                            if (Alldata.daily_task[l].employee[i].task) {
+                                for (var m = 0; m < Alldata.daily_task[l].employee[i].task.length; ++m) {
+                                    for (var z = 0; z < arr.length; z++) {
+                                        if (work == arr[z].name && Alldata.daily_task[l].today == arr[z].to && arr[z].employee == i) {
+                                            check = 1;
+                                            break;
+                                        }
+                                    }
+                                    if (check) {
+                                        break;
+                                    }
+                                    if (Alldata.daily_task[l].employee[i].task[m] == work || allPressStatusArr[l].pressArr[j] > 60) {
+                                        check = 1;
+                                        break;
+                                    }
+                                }
+                            }
+                            if (check) {
+                                continue;
+                            }
+                            else {
+                                if (count_day[i][l] < -1 || l > 26)
+                                    continue;
+                                arr_.begin = Alldata.daily_task[j].today;
+                                arr_.to = Alldata.daily_task[l].today;
+                                arr_.name = work;
+                                arr_.employee = i;
+                                if (re_arr[i].includes(work) == false)
+                                    re_arr[i].push(work);
+                                arr.push(JSON.parse(JSON.stringify(arr_)));
+                                count_day[i][j]++;
+                                count_day[i][l]--;
+                                count++;
+                                break;
+                            }
                         }
                     }
-                    if (allPressStatusArr[i].pressArr[j] > 60 && Alldata.daily_task.length - i > 9 && k > 1 && check != 1) {
-                        if (count_ < 2) {
+                }
+            }
+        }
+    }
+    return re_arr;
+}
+function newSch(Alldata, allPressStatusArr) {
+    var arr = [];
+    var arr_ = {};
+    var re_arr = [];
+    var count_day = [];
+    var count;
+    var test2 = [];
+    var check2;
+    var check3;
+    var place = 0;
+    var All = {};
+    var Allproject = {};
+    for (var i = 0; i < Alldata.employee_num; ++i) {
+        re_arr[i] = [];
+    }
+    for (var i = 0; i < 10; i++) {
+        var b = [];
+        for (var j = 0; j < 100; j++) {
+            b[j] = 0;
+        }
+        count_day[i] = b;
+    }
 
-                            move[j].push(JSON.parse(JSON.stringify(JSON.stringify(Alldata.daily_task[i].employee[j].task[k]))));
-                            move_num[j]++;
-                            count_++;
-                            task_move_.name = JSON.parse(JSON.stringify(Alldata.daily_task[i].employee[j].task[k]));
-                            task_move_.move_begin = JSON.parse(JSON.stringify(Alldata.daily_task[i].today));
-                            var x = [Math.floor(Math.random() * 10)]
-                            y = ["20230621", "20230622", "20230623", "20230624", "20230625", "20230626", "20230627", "20230628", "20230629", "20230630"];
-                            task_move_.move_end = y[x];
-                            test.push(y[x]);
-                            test.push(j);
-                            test.push(Alldata.daily_task[i].employee[j].task[k]);
-                            task_move[j].push(JSON.parse(JSON.stringify(task_move_)));
-                            task_move_re[j].push(JSON.parse(JSON.stringify(task_move_)));
-                            web_.task_move = JSON.parse(JSON.stringify(task_move_re[j]));
-                            web_.name = JSON.parse(JSON.stringify(Alldata.daily_task[i].employee[j].name));
-                            if (edit_ch[j] == 0) {
-                                edit.push(JSON.parse(JSON.stringify(Alldata.daily_task[i].employee[j].name)));
-                                edit_ch[j] = 1;
+    for (var i = 0; i < Alldata.employee_num; ++i) {
+        for (var j = 0; j < Alldata.daily_task.length; ++j) {
+            if (allPressStatusArr[j].pressArr[i] > 60 && count_day[i][j] < 2) {
+                if (Alldata.daily_task[j].employee[i].task) {
+                    count = 0;
+                    for (var k = 0; k < Alldata.daily_task[j].employee[i].task.length; ++k) {
+                        if (count > 1) {
+                            break;
+                        }
+                        work = Alldata.daily_task[j].employee[i].task[k];
+                        for (var l = j; l < Alldata.daily_task.length; ++l) {
+                            var check = 0;
+                            if (Alldata.daily_task[l].employee[i].task) {
+                                for (var m = 0; m < Alldata.daily_task[l].employee[i].task.length; ++m) {
+                                    for (var z = 0; z < arr.length; z++) {
+                                        if (work == arr[z].name && Alldata.daily_task[l].today == arr[z].to && arr[z].employee == i) {
+                                            check = 1;
+                                            break;
+                                        }
+                                    }
+                                    if (check) {
+                                        break;
+                                    }
+                                    if (Alldata.daily_task[l].employee[i].task[m] == work || allPressStatusArr[l].pressArr[j] > 60) {
+                                        check = 1;
+                                        break;
+                                    }
+                                }
                             }
-                            web[j] = JSON.parse(JSON.stringify(web_));
+                            if (check) {
+                                continue;
+                            }
+                            else {
+                                if (count_day[i][l] < -1 || l > 26)
+                                    continue;
+                                arr_.begin = Alldata.daily_task[j].today;
+                                arr_.to = Alldata.daily_task[l].today;
+                                arr_.name = work;
+                                arr_.employee = i;
+                                re_arr[i].push(work);
+                                arr.push(JSON.parse(JSON.stringify(arr_)));
+                                count_day[i][j]++;
+                                count_day[i][l]--;
+                                count++;
+                                break;
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+    var daily_list = [];
+    for (var i = 0; i < Alldata.daily_task.length; ++i) {
+        var daily = {};
+        var employee_list = [];
+        for (var j = 0; j < Alldata.daily_task[i].employee.length; ++j) {
+            var employee_ = {};
+            if (Alldata.daily_task[i].employee[j].task) {
+                var task_list = [];
+                check3 = 0;
+                for (var k = 0; k < Alldata.daily_task[i].employee[j].task.length; ++k) {
+                    check2 = 0;
+
+                    for (m = 0; m < arr.length; ++m) {
+                        if (Alldata.daily_task[i].today == arr[m].begin && arr[m].employee == j && arr[m].name == Alldata.daily_task[i].employee[j].task[k]) {
+                            check2 = 1;
+                            break;
+                        }
+                        if (Alldata.daily_task[i].today == arr[m].to && arr[m].employee == j && check3 != 1) {
+                            check3 = 1;
+                            check2 = 2;
+                            place = m;
+                            break;
+                        }
+                    }
+                    if (check2 == 1) {
+                        continue;
+                    }
+                    if (check2 == 0) {
+                        task_list.push(Alldata.daily_task[i].employee[j].task[k]);
+                    }
+                    if (check2 == 2) {
+                        task_list.push(arr[place].name);
+                    }
+                }
+            }
+            employee_.task = task_list;
+            employee_.name = Alldata.daily_task[i].employee[j].name;
+            employee_.pressure_factor = Alldata.daily_task[i].employee[j].pressure_factor;
+            employee_.is_meeting = Alldata.daily_task[i].employee[j].is_meeting;
+            employee_.is_co_meeting = Alldata.daily_task[i].employee[j].is_co_meeting;
+            employee_list.push(employee_);
+
+        }
+        daily.today = Alldata.daily_task[i].today;
+        daily.employee = employee_list;
+        daily_list.push(daily);
+    }
+    Allproject.name = Alldata.name;
+    Allproject.employee_num = Alldata.employee_num;
+    Allproject.start_date = Alldata.start_date;
+    Allproject.deadline = Alldata.deadline;
+    Allproject.daily_task = daily_list;
+    Allproject.isChanged = true;
+    All.project = Allproject;
+    return All;
+}
+function formatSched1(sched) {
+    var arr = [];
+    var arr_ = {};
+    var re_arr = [];
+    var count_day = [];
+    var count;
+    var test2 = [];
+    var check2;
+    var check3;
+    var place = 0;
+    var All = {};
+    var Allproject = {};
+    for (var i = 0; i < Alldata.employee_num; ++i) {
+        re_arr[i] = [];
+    }
+    for (var i = 0; i < 10; i++) {
+        var b = [];
+        for (var j = 0; j < 100; j++) {
+            b[j] = 0;
+        }
+        count_day[i] = b;
+    }
+
+    for (var i = 0; i < Alldata.employee_num; ++i) {
+        for (var j = 0; j < Alldata.daily_task.length; ++j) {
+            if (Alldata.daily_task[j].employee[i].task) {
+                for (var k = 0; k < Alldata.daily_task[j].employee[i].task.length; ++k) {
+                    work = Alldata.daily_task[j].employee[i].task[k];
+                    for (var l = j; l < Alldata.daily_task.length; ++l) {
+                        var check = 0;
+                        if (Alldata.daily_task[l].employee[i].task) {
+                            for (var m = 0; m < Alldata.daily_task[l].employee[i].task.length; ++m) {
+                                for (var z = 0; z < arr.length; z++) {
+                                    if (work == arr[z].name && Alldata.daily_task[l].today == arr[z].to && arr[z].employee == i) {
+                                        check = 1;
+                                        break;
+                                    }
+                                }
+                                if (check) {
+                                    break;
+                                }
+                                if (Alldata.daily_task[l].employee[i].task[m] == work || allPressStatusArr[l].pressArr[j] > 60) {
+                                    check = 1;
+                                    break;
+                                }
+                            }
+                        }
+                        if (check) {
+                            continue;
                         }
                         else {
-                            if (check != 1)
-                                change_task_detail[k] = JSON.parse(JSON.stringify(Alldata.daily_task[i].employee[j].task[k]));
+                            if (count_day[i][l] < -1 || l > 26)
+                                continue;
+                            arr_.begin = Alldata.daily_task[j].today;
+                            arr_.to = Alldata.daily_task[l].today;
+                            arr_.name = work;
+                            arr_.employee = i;
+                            re_arr[i].push(work);
+                            arr.push(JSON.parse(JSON.stringify(arr_)));
+                            count_day[i][j]++;
+                            count_day[i][l]--;
+                            count++;
+                            break;
                         }
-                    }
-                    else {
-                        if (check != 1)
-                            change_task_detail[k] = JSON.parse(JSON.stringify(Alldata.daily_task[i].employee[j].task[k]));
                     }
                 }
             }
 
-            //check = 0;
-            //     if (times > 1)
-            //         break;
-            //for (var k = 0; k < Alldata.daily_task[i].employee[j].task.length; ++k) {
-            //    if (move[j][move_num[j] - 1] == Alldata.daily_task[i].employee[j].task[k]) {
-            //         check = 1;
-            //    }
-            //}
-            //if (check != 1) {
-            //    change_task_detail.push(JSON.parse(JSON.stringify(move[j][move_num[j] - 1])));
-            //    move_num[j]--;
-            //    web[j].task_move[web_be[j]].move_end = JSON.parse(JSON.stringify(Alldata.daily_task[i].today));
-            //     web_be[j]++;
-            // }
-            //     if (allPressStatusArr[i].pressArr[j] > 29 && check != 1 && allPressStatusArr[i].pressArr[j] < 60) {
-            //         test.push(web[j].task_move[web_be[j]]);
-            //         test.push(0);
-            //         change_task_detail.push(JSON.parse(JSON.stringify(move[j][l])));
-            //         move_num[j]--;
-            //         web[j].task_move[web_be[j]].move_end = JSON.parse(JSON.stringify(Alldata.daily_task[i].today));
-            //         web_be[j]++;
-            //         times++;
-            //     }
-            //     if (allPressStatusArr[i].pressArr[j] < 29 && move_num[j] > 0 && check != 1 && web[j].task_move[web_be[j]] != i) {
-            //         if (move_num[j] > 1) {
-            //             change_task_detail.push(JSON.parse(JSON.stringify(move[j][l])));
-            //             move_num[j]--;
-            //             web[j].task_move[web_be[j]].move_end = JSON.parse(JSON.stringify(Alldata.daily_task[i].today));
-            //             web_be[j]++;
-            //             change_task_detail.push(JSON.parse(JSON.stringify(move[j][l])));
-            //             move_num[j]--;
-            //             web[j].task_move[web_be[j]].move_end = JSON.parse(JSON.stringify(Alldata.daily_task[i].today));
-            //             web_be[j]++;
-            //             times++;
-            //         }
-            //         else {
-            //             change_task_detail.push(JSON.parse(JSON.stringify(move[j][l])));
-            //             move_num[j]--;
-            //             web[j].task_move[web_be[j]].move_end = JSON.parse(JSON.stringify(Alldata.daily_task[i].today));
-            //             web_be[j]++;
-            //             times++;
-            //         }
-            //     }
-            // if (i == Alldata.daily_task.length - 1) {
-            //     while (move_num[j] > 0) {
-            //         change_task_detail.push(JSON.parse(JSON.stringify(move[j][move_num[j] - 1])));
-            //         move_num[j]--;
-            //         web[j].task_move[web_be[j]].move_end = JSON.parse(JSON.stringify(Alldata.daily_task[i].today));
-            //         web_be[j]++;
-            //     }
-            // }
-            change_task = JSON.parse(JSON.stringify(change_task_detail));
-            change_employee_.is_meeting = Alldata.daily_task[i].employee[j].is_meeting;
-            change_employee_.is_co_meeting = Alldata.daily_task[i].employee[j].is_co_meeting;
-            change_employee_.name = JSON.parse(JSON.stringify(Alldata.daily_task[i].employee[j].name));
-            change_employee_.task = JSON.parse(JSON.stringify(change_task));
-            change_employee_.pressure_factor = JSON.parse(JSON.stringify(Alldata.daily_task[i].employee[j].pressure_factor));
-            change_employee[j] = JSON.parse(JSON.stringify(change_employee_));
-        }
-        changedaily_task_.employee = JSON.parse(JSON.stringify(change_employee));
-        changedaily_task_.today = Alldata.daily_task[i].today;
-        changedaily_task[i] = JSON.parse(JSON.stringify(changedaily_task_));
-    }
-    All.daily_task = JSON.parse(JSON.stringify(changedaily_task));
-    ALL.project = JSON.parse(JSON.stringify(All));
-    for (var z = 0; z < test.length; z += 3) {
-        for (var i = 0; i < 30; ++i) {
-            if (test[z] == Alldata.daily_task[i].today) {
-                ALL.project.daily_task[i].employee[test[z + 1]].task.push(test[z + 2]);
-            }
         }
     }
-    //ALL.test = test;
-    return ALL;
 }
