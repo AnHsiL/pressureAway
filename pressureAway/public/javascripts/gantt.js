@@ -17,6 +17,7 @@ var id = gantt.addMarker({
   title: dateToStr(new Date()),
   content: "Today: " + dateToStr(new Date()),
 });
+
 // set gantt_marker_content
 gantt.templates.marker_text = function (marker) {
   return marker.title;
@@ -31,6 +32,10 @@ setInterval(function () {
 gantt.config.scale_height = 50;
 
 gantt.config.readonly = true;
+
+gantt.templates.grid_file = function (item) {
+  return "<div class='gantt_tree_icon'></div>";
+};
 
 var weekendsStyle = function (date) {
   var DateToStr = gantt.date.date_to_str("%D");

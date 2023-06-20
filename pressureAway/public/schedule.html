@@ -15,19 +15,32 @@
   <link href="./css/gantt.css" rel="stylesheet" type="text/css" />
   <script src="https://docs.dhtmlx.com/gantt/codebase/dhtmlxgantt.js?v=6.1.7"></script>
   <script src="./javascripts/gantt.js"></script>
-  <script src="./javascripts/index.js"></script>
+  <script src="./javascripts/schedule.js"></script>
 </head>
 
 <body>
   <h1>New Schedule</h1>
-  <button class="btn-orange-outline" onclick="toStart()">back to index</button>
-  <button id="btn_set" class="btn-orange">save</button>
-
+  <button id="btn_back" class="btn-orange-outline" onclick="toStart()">back to index</button>
+  <button id="btn_set" class="btn-orange" onclick="setNewSched()">save to firebase</button>
   <br><br>
-  <div id="gantt_here" style='width:97%; height:90vh; margin: auto;'></div>
+  <div id="new_gantt_here" style='width:97%; height:90vh; margin: auto;'></div>
 </body>
 
 <script>
 </script>
+
+<style>
+  #btn_set {
+    position: absolute;
+    top: 110px;
+    right: 20px;
+  }
+
+  #btn_back {
+    position: absolute;
+    top: 110px;
+    left: 20px;
+  }
+</style>
 
 </html>

@@ -14,35 +14,42 @@
     <link rel="stylesheet" type="text/css" href="https://docs.dhtmlx.com/gantt/codebase/dhtmlxgantt.css">
     <link href="./css/gantt.css" rel="stylesheet" type="text/css" />
     <script src="https://docs.dhtmlx.com/gantt/codebase/dhtmlxgantt.js?v=6.1.7"></script>
-    <script src="./javascripts/gantt.js"></script>
+    <!-- <script src="./javascripts/dhtmlxgantt.d.ts"></script> -->
+    <script src="./javascripts/dhtmlxgantt.js"></script>
     <script src="./javascripts/index.js"></script>
+    <script src="./javascripts/gantt.js"></script>
 </head>
 
 <body>
     <h1>Pressure Away</h1>
-    <!-- <div class="sched"> -->
-    <button class="btn-orange-outline" onclick="toSched()">go to schedule</button>
-    <button class="btn-orange" id="btn_get">get Data</button>
+    <button id="newPage" class="btn-orange-outline" onclick="toSched()">go to schedule</button>
+
+    <button id="btn_pressure" type="button" class="btn btn-danger btn-circle btn-xl">Red circular button</button>
     <br><br>
-    <div id="gantt_here" style='width:100%; height:100vh;'></div>
-    <!-- </div> -->
+    <div id="ori_gantt_here" style='width:97%; height:90vh; margin: auto;'></div>
 </body>
 
 <script>
 </script>
 
 <style>
-    /* 
-    div.sched {
-        position: relative;
-        top: 30px;
-    }
-
-    button.btn-pressure {
+    #newPage {
         position: absolute;
         top: 110px;
-        right: 0;
-    } */
+        left: 20px;
+    }
+
+    .btn-circle.btn-xl {
+        position: absolute;
+        top: 40px;
+        right: 60px;
+        width: 100px;
+        height: 100px;
+        padding: 13px 18px;
+        border-radius: 60px;
+        font-size: 15px;
+        text-align: center;
+    }
 </style>
 
 </html>

@@ -1,17 +1,19 @@
 $(document).ready(function () {
     getOriSched();
-
-    // $("#btn_set").click(function(){
-    //     setPersonalTask($("#input_date").val(), $("#input_name").val(), $("#input_dataToChange").val());
-    // })
 });
+
+function toSched() {
+    window.location.href = "./schedule.html";
+}
 
 function getOriSched() {
     $.ajax({
         url: "/getOriSched",
         type: "POST",
         success: function (res) {
-            document.getElementById("all_data").innerHTML = JSON.stringify(res);
+            drawGantt(res);
+            // gantt.init("ori_gantt_here");
+            // gantt.load("../data/schedule.json");
         },
         error: function (err) {
             swal.fire({
@@ -30,7 +32,7 @@ function getAllData() {
         url: "/getAllData",
         type: "POST",
         success: function (res) {
-            drawGantt(res);
+            return res;
         },
         error: function (err) {
             swal.fire({
@@ -46,26 +48,33 @@ function getAllData() {
 
 function drawGantt(data) {
     var dataToGantt = { "data": [], "links": [] };
-    var DT = data.project.daily_task;
-    var EN = data.project.employee_num;
-    var name = data.project.name;
+    var oriSched = data;
 
-    for (var i = 1; i <= EN; i++) {
+    for (var i = 1; i <= oriSched.length; i++) {
         var eachEmployee = {
-            "id": i,
-            "text": DT[0].employee[i - 1].name,
-            "open": true,
-            "type": "project"
+            "id": String(i),
+            "text": oriSched[i - 1].name,
+            "type": "project",
+            "open": true
         };
         dataToGantt.data.push(eachEmployee);
-    }
-    var eachTask = {};
-    for (var i = 0; i <= EN; i++) {
-    }
 
-    dataToGantt.data.push(eachTask);
-    // console.log(dataToGantt);
-    gantt.init("gantt_here");
+        for (var j = 1; j <= oriSched[i - 1].task.length; j++) {
+            task = oriSched[i - 1].task[j - 1];
+            var eachTask = {
+                "id": String(i) + "-" + String(j),
+                "text": task.taskName,
+                "start_date": task.start[0],
+                "duration": task.duration,
+                "parent": String(i),
+                "type": "task",
+            };
+            dataToGantt.data.push(eachTask);
+        }
+    }
+    sessionStorage.setItem("oriSched", JSON.stringify(dataToGantt));
+
+    gantt.init("ori_gantt_here");
     gantt.parse(dataToGantt);
 }
 
@@ -120,24 +129,6 @@ function changePersonalTask(date, name, dataToChange) {
                 location.reload();
             });
             // alert("Data Changed");
-        },
-        error: function (err) {
-            swal.fire({
-                title: "Error",
-                text: err,
-                icon: "error",
-            }).then(() => {
-                location.reload();
-            });
-        }
-    });
-}
-function getNewSched() { // page 2
-    $.ajax({
-        url: "/getNewSched",
-        type: "POST",
-        success: function (res) {
-            document.getElementById("all_data").innerHTML = JSON.stringify(res);
         },
         error: function (err) {
             swal.fire({
