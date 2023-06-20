@@ -46,24 +46,24 @@ module.exports = class Controller {
             });
 
     }
-    getAvgPressureScore(req, res, next){
+    getAvgPressureScore(req, res, next) {
         var dateToAsk = req.body.today;
         CRUD.readAllData()
-        .then((r_data) => {
-            var allPressStatusArr = allPressStatus(r_data.project);
-            var stuff_num, allPressureScore = 0;
-            for(var i = 0; i < allPressStatusArr.length; i++){
-                stuff_num = allPressStatusArr[i].pressArr.length
-                if(allPressStatusArr[i].date == dateToAsk){
-                    for(var j = 0; j < allPressStatusArr[i].pressArr.length; j++)
-                    allPressureScore += allPressStatusArr[i].pressArr[j];
+            .then((r_data) => {
+                var allPressStatusArr = allPressStatus(r_data.project);
+                var stuff_num, allPressureScore = 0;
+                for (var i = 0; i < allPressStatusArr.length; i++) {
+                    stuff_num = allPressStatusArr[i].pressArr.length
+                    if (allPressStatusArr[i].date == dateToAsk) {
+                        for (var j = 0; j < allPressStatusArr[i].pressArr.length; j++)
+                            allPressureScore += allPressStatusArr[i].pressArr[j];
+                    }
                 }
-            }
-            var avg_pressScore = Math.round(allPressureScore / stuff_num);
-            res.json({
-                avg_pressScore : avg_pressScore
+                var avg_pressScore = Math.round(allPressureScore / stuff_num);
+                res.json({
+                    avg_pressScore: avg_pressScore
+                });
             });
-        });
     }
     toUnchangedStatus(req, res, next) {
         try {
@@ -91,18 +91,19 @@ module.exports = class Controller {
     }
     getOriSched(req, res, next) {
         CRUD.readAllData()
-        .then((r_data) => {
-            var oriSched = formatSched(r_data);
-            res.json(oriSched);
-        });
+            .then((r_data) => {
+                var oriSched = formatSched(r_data);
+                res.json(oriSched);
+            });
     }
     getNewSched(req, res, next) {
         CRUD.readAllData()
-        .then((r_data) => {
-            var allPressStatusArr = allPressStatus(r_data.project);
-            var newSched = formatSched(newSch(r_data.project, allPressStatusArr));
-            res.json(newSched);
-        });
+            .then((r_data) => {
+                var allPressStatusArr = allPressStatus(r_data.project);
+                //var newSched = formatSched(newSch(r_data.project, allPressStatusArr));
+                var newSched = newSch(r_data.project, allPressStatusArr);
+                res.json(newSched);
+            });
     }
 
 }
@@ -211,14 +212,14 @@ function PressureScore(pressureFactor) {
     if (pressureFactor.is_nap) score += nap_weight;
     if (pressureFactor.is_foodout) score += foodout_weight;
 
-    if(pressureFactor.over_suager_day >= 3) score += suager_weight*1;
-    else if(pressureFactor.over_suager_day >= 2) score += suager_weight*0.6;
-    else if(pressureFactor.over_suager_day >= 1) score += suager_weight*0.2;
-  
-    var screenTime = pressureFactor.screen_worktime / (7*60);
-    if(pressureFactor.is_meeting) {
-      score += meeting_weight;
-      screenTime = pressureFactor.screen_worktime / (5*60);
+    if (pressureFactor.over_suager_day >= 3) score += suager_weight * 1;
+    else if (pressureFactor.over_suager_day >= 2) score += suager_weight * 0.6;
+    else if (pressureFactor.over_suager_day >= 1) score += suager_weight * 0.2;
+
+    var screenTime = pressureFactor.screen_worktime / (7 * 60);
+    if (pressureFactor.is_meeting) {
+        score += meeting_weight;
+        screenTime = pressureFactor.screen_worktime / (5 * 60);
     }
     if (pressureFactor.is_co_meeting) {
         score += co_meeting_weight;
@@ -226,12 +227,12 @@ function PressureScore(pressureFactor) {
     }
     score += screenTime * screen_weight;
 
-    if(pressureFactor.complete_pa > 10) score += complete_weight;
-    else if(pressureFactor.complete_pa > 5) score += 90 / 100 *complete_weight;
-    else if(pressureFactor.complete_pa > 3) score += 70 / 100 * complete_weight;
-    else if(pressureFactor.complete_pa > 1) score += 50 / 100 * pressureFactor.complete_pa * complete_weight;
-    else if(pressureFactor.complete_pa > -1) score += 20 / 100 * complete_weight;
-    else if(pressureFactor.complete_pa > -3) score += 10 / 100 * complete_weight;
+    if (pressureFactor.complete_pa > 10) score += complete_weight;
+    else if (pressureFactor.complete_pa > 5) score += 90 / 100 * complete_weight;
+    else if (pressureFactor.complete_pa > 3) score += 70 / 100 * complete_weight;
+    else if (pressureFactor.complete_pa > 1) score += 50 / 100 * pressureFactor.complete_pa * complete_weight;
+    else if (pressureFactor.complete_pa > -1) score += 20 / 100 * complete_weight;
+    else if (pressureFactor.complete_pa > -3) score += 10 / 100 * complete_weight;
     return Math.round(score);
 }
 
@@ -320,7 +321,6 @@ function formatSched(sched) {
 }
 
 function newSch(Alldata, allPressStatusArr) {
-    var Alldata = response[0].project;
     var All = {};
     var ALL = {};
     All.name = Alldata.name;
@@ -391,13 +391,15 @@ function newSch(Alldata, allPressStatusArr) {
                 }
 
             }
-            if (allPressStatusArr[i].pressArr[j] > 29 && move_num[j] > 0) {
+            if (allPressStatusArr[i].pressArr[j] > 29 && move_num[j] > 0 && i != 0) {
+                test.push(web[j].task_move[web_be[j]]);
+                test.push(0);
                 change_task_detail.push(JSON.parse(JSON.stringify(move[j][move_num[j] - 1])));
                 move_num[j]--;
                 web[j].task_move[web_be[j]].move_end = JSON.parse(JSON.stringify(Alldata.daily_task[i].today));
                 web_be[j]++;
             }
-            if (allPressStatusArr[i].pressArr[j] < 29 && move_num[j] > 0) {
+            if (allPressStatusArr[i].pressArr[j] < 29 && move_num[j] > 0 && i != 0) {
                 if (move_num[j] > 1) {
                     change_task_detail.push(JSON.parse(JSON.stringify(move[j][move_num[j] - 1])));
                     move_num[j]--;
@@ -438,5 +440,5 @@ function newSch(Alldata, allPressStatusArr) {
     All.daily_task = JSON.parse(JSON.stringify(changedaily_task));
     ALL.project = JSON.parse(JSON.stringify(All));
 
-    return ALL;
+    return web;
 }
