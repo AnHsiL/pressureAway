@@ -361,8 +361,6 @@ function newSch(Alldata, allPressStatusArr) {
     var test = [];
     var task_move = [];
     var task_move_ = {};
-    var AllDairyTask = [];
-    var AllDairyTask_ = {};
     var edit = [];
     var edit_ch = [];
     var web_be = [];
