@@ -450,40 +450,40 @@ function newSch(Alldata, allPressStatusArr) {
                     }
                 }
             }
-            if (allPressStatusArr[i].pressArr[j] > 29 && move_num[j] > 0 && web[j].task_move[web_be[j]] != i && check != 1 && allPressStatusArr[i].pressArr[j] < 60) {
-                test.push(web[j].task_move[web_be[j]]);
-                test.push(0);
-                change_task_detail.push(JSON.parse(JSON.stringify(move[j][move_num[j] - 1])));
-                move_num[j]--;
-                web[j].task_move[web_be[j]].move_end = JSON.parse(JSON.stringify(Alldata.daily_task[i].today));
-                web_be[j]++;
-            }
-            if (allPressStatusArr[i].pressArr[j] < 29 && move_num[j] > 0 && check != 1 && web[j].task_move[web_be[j]] != i) {
-                if (move_num[j] > 1) {
-                    change_task_detail.push(JSON.parse(JSON.stringify(move[j][move_num[j] - 1])));
-                    move_num[j]--;
-                    web[j].task_move[web_be[j]].move_end = JSON.parse(JSON.stringify(Alldata.daily_task[i].today));
-                    web_be[j]++;
-                    change_task_detail.push(JSON.parse(JSON.stringify(move[j][move_num[j] - 1])));
-                    move_num[j]--;
-                    web[j].task_move[web_be[j]].move_end = JSON.parse(JSON.stringify(Alldata.daily_task[i].today));
-                    web_be[j]++;
-                }
-                else {
-                    change_task_detail.push(JSON.parse(JSON.stringify(move[j][move_num[j] - 1])));
-                    move_num[j]--;
-                    web[j].task_move[web_be[j]].move_end = JSON.parse(JSON.stringify(Alldata.daily_task[i].today));
-                    web_be[j]++;
-                }
-            }
-            if (i == Alldata.daily_task.length - 1) {
-                while (move_num[j] > 0) {
-                    change_task_detail.push(JSON.parse(JSON.stringify(move[j][move_num[j] - 1])));
-                    move_num[j]--;
-                    web[j].task_move[web_be[j]].move_end = JSON.parse(JSON.stringify(Alldata.daily_task[i].today));
-                    web_be[j]++;
-                }
-            }
+            // if (allPressStatusArr[i].pressArr[j] > 29 && move_num[j] > 0 && web[j].task_move[web_be[j]] != i && check != 1 && allPressStatusArr[i].pressArr[j] < 60) {
+            //     test.push(web[j].task_move[web_be[j]]);
+            //     test.push(0);
+            //     change_task_detail.push(JSON.parse(JSON.stringify(move[j][move_num[j] - 1])));
+            //     move_num[j]--;
+            //     web[j].task_move[web_be[j]].move_end = JSON.parse(JSON.stringify(Alldata.daily_task[i].today));
+            //     web_be[j]++;
+            // }
+            // if (allPressStatusArr[i].pressArr[j] < 29 && move_num[j] > 0 && check != 1 && web[j].task_move[web_be[j]] != i) {
+            //     if (move_num[j] > 1) {
+            //         change_task_detail.push(JSON.parse(JSON.stringify(move[j][move_num[j] - 1])));
+            //         move_num[j]--;
+            //         web[j].task_move[web_be[j]].move_end = JSON.parse(JSON.stringify(Alldata.daily_task[i].today));
+            //         web_be[j]++;
+            //         change_task_detail.push(JSON.parse(JSON.stringify(move[j][move_num[j] - 1])));
+            //         move_num[j]--;
+            //         web[j].task_move[web_be[j]].move_end = JSON.parse(JSON.stringify(Alldata.daily_task[i].today));
+            //         web_be[j]++;
+            //     }
+            //     else {
+            //         change_task_detail.push(JSON.parse(JSON.stringify(move[j][move_num[j] - 1])));
+            //         move_num[j]--;
+            //         web[j].task_move[web_be[j]].move_end = JSON.parse(JSON.stringify(Alldata.daily_task[i].today));
+            //         web_be[j]++;
+            //     }
+            // }
+            // if (i == Alldata.daily_task.length - 1) {
+            //     while (move_num[j] > 0) {
+            //         change_task_detail.push(JSON.parse(JSON.stringify(move[j][move_num[j] - 1])));
+            //         move_num[j]--;
+            //         web[j].task_move[web_be[j]].move_end = JSON.parse(JSON.stringify(Alldata.daily_task[i].today));
+            //         web_be[j]++;
+            //     }
+            // }
             change_task = JSON.parse(JSON.stringify(change_task_detail));
             change_employee_.is_meeting = Alldata.daily_task[i].employee[j].is_meeting;
             change_employee_.is_co_meeting = Alldata.daily_task[i].employee[j].is_co_meeting;
