@@ -19,7 +19,7 @@ module.exports = class Controller {
                     for (var i = 0; i < Object.keys(r_data.project.daily_task).length; i++) {
                         if (req.body.date == r_data.project.daily_task[i].today) {
                             for (var j = 0; j < r_data.project.employee_num; j++) {
-                                if (req.body.name == r_data.project.daily_task[i].each_task[j].name) {
+                                if (req.body.name == r_data.project.daily_task[i].employee[j].name) {
                                     CRUD.setPersonalTask(i, j, newData)
                                         .then(() => {
                                             res.json({
@@ -48,6 +48,45 @@ module.exports = class Controller {
 
 
     }
+    toUnchangedStatus(req, res, next) {
+        try {
+            CRUD.setIsChange(false)
+                .then(() => {
+                    res.json({
+                        status: "succ",
+                    });
+                });
+        } catch (err) {
+            res.err();
+        }
+    }
+    toChangedStatus(req, res, next) {
+        try {
+            CRUD.setIsChange(true)
+                .then(() => {
+                    res.json({
+                        status: "succ",
+                    });
+                });
+        } catch (err) {
+            res.err();
+        }
+    }
+    getOriSched(req, res, next) {
+        CRUD.readAllData()
+            .then((r_data) => {
+                var oriSched = formatSched(r_data);
+                res.json({
+                    oriSched: oriSched
+                });
+            });
+    }
+    getNewSched(req, res, next) {
+        var newSched = formatSched(req.body.newSched);
+        res.json({
+            newSched: newSched
+        });
+    }
 }
 
 function dateDiff(Date1_, Date2_) {
@@ -74,7 +113,7 @@ function allPressStatus(data) {
         var lastDay = dateDiff(data.daily_task[day].today, data.deadline);
 
         for (var stuff = 0; stuff < stuff_num; stuff++) {
-            var eachPressureFactor = data.daily_task[day].each_task[stuff].pressure_factor;
+            var eachPressureFactor = data.daily_task[day].employee[stuff].pressure_factor;
             if (eachPressureFactor.sugar - totalSugar[stuff] / cntSugarDay[stuff] >= 2) {
                 sugarContinue[stuff] += 1;
             }
@@ -85,15 +124,14 @@ function allPressStatus(data) {
             }
             eachPressureFactor.over_suager_day = sugarContinue[stuff];
 
-            var eachTask = data.daily_task[day].each_task[stuff].task;
+            var eachTask = data.daily_task[day].employee[stuff].task;
             var taskUnfinished = 0;
-            for (var k = 0; k < eachTask.task_detail.length; k++)
-                if (!eachTask.task_detail[k].complete)
-                    taskUnfinished += eachTask.task_detail[k].compress_rate;
-            eachTask.complete_pa = 0;
+            for (var k = 0; k < eachTask.length; k++)
+                taskUnfinished++;
+            data.daily_task[day].employee[stuff].complete_pa = 0;
             if (taskUnfinished > 0)
-                eachTask.complete_pa = (taskUnfinished / eachTask.task_detail.length) * totalDay / lastDay;
-            else eachTask.complete_pa = 1;
+                data.daily_task[day].employee[stuff].complete_pa = (taskUnfinished / eachTask.length) * totalDay / lastDay;
+            else data.daily_task[day].employee[stuff].complete_pa = 1;
         }
     }
 
@@ -101,7 +139,7 @@ function allPressStatus(data) {
         var dailyPressData_pressArr = [];
 
         for (var stuff = 0; stuff < stuff_num; stuff++) {
-            var personalData = data.daily_task[day].each_task[stuff];
+            var personalData = data.daily_task[day].employee[stuff];
 
             var personalPress = {
                 name: personalData.name,
@@ -111,23 +149,20 @@ function allPressStatus(data) {
                     screen_worktime: personalData.pressure_factor.screen_worktime,
                     makeup: personalData.pressure_factor.makeup,
                     over_suager_day: personalData.pressure_factor.over_suager_day,
-                    is_meeting: personalData.task.is_meeting,
-                    is_co_meeting: personalData.task.is_co_meeting,
-                    complete_pa: personalData.task.complete_pa
+                    is_meeting: personalData.is_meeting,
+                    is_co_meeting: personalData.is_co_meeting,
+                    complete_pa: personalData.complete_pa
                 }
             };
 
             var score = PressureScore(personalPress.pressure_factor);
-            if (score >= 66) dailyPressData_pressArr.push(1);
-            else if (score <= 33) dailyPressData_pressArr.push(-1);
-            else dailyPressData_pressArr.push(0);
+            dailyPressData_pressArr.push(score);
         }
 
-        var dailyPressData = {
+        allPressData.push({
             date: data.daily_task[day].today,
             pressArr: dailyPressData_pressArr
-        };
-        allPressData.push(dailyPressData)
+        })
     }
     return allPressData;
 };
@@ -154,10 +189,12 @@ function PressureScore(pressureFactor) {
         if (pressureFactor.makeup == 0) score += 5;
         else if (pressureFactor.makeup == 5) score += 3;
     }
+
     if (pressureFactor.is_nap) score += nap_weight;
     if (pressureFactor.is_foodout) score += foodout_weight;
-    if (pressureFactor.over_suager_day >= 3) score += suager_weight * 1.3;
-    else if (pressureFactor.over_suager_day >= 2) score += suager_weight * 0.8;
+
+    if (pressureFactor.over_suager_day >= 3) score += suager_weight * 1.1;
+    else if (pressureFactor.over_suager_day >= 2) score += suager_weight * 0.6;
     else if (pressureFactor.over_suager_day >= 1) score += suager_weight * 0.2;
 
     var screenTime = pressureFactor.screen_worktime / (7 * 60);
@@ -171,12 +208,96 @@ function PressureScore(pressureFactor) {
     }
     score += screenTime * screen_weight;
 
-    if (pressureFactor.complete_pa > 10) score += 1.2 * complete_weight;
-    else if (pressureFactor.complete_pa > 5) score += 1.1 * complete_weight;
-    else if (pressureFactor.complete_pa > 3) score += complete_weight;
+    if (pressureFactor.complete_pa > 10) score += 1.1 * complete_weight;
+    else if (pressureFactor.complete_pa > 5) score += complete_weight;
+    else if (pressureFactor.complete_pa > 3) score += 80 / 100 * complete_weight;
     else if (pressureFactor.complete_pa > 1) score += 60 / 100 * pressureFactor.complete_pa * complete_weight;
     else if (pressureFactor.complete_pa > -1) score += 20 / 100 * complete_weight;
     else if (pressureFactor.complete_pa > -3) score += 10 / 100 * complete_weight;
-    return score;
+    return Math.round(score);
+}
+
+function formatSched(sched) {
+    var dailyTask = sched.project.daily_task;
+
+    var allPersonName = new Array(sched.project.employee_num);
+    for (var day = 0; day < dailyTask.length; day++) {
+        for (var stuff = 0; stuff < dailyTask[day].employee.length; stuff++) {
+            allPersonName[stuff] = dailyTask[day].employee[stuff].name;
+        }
+    }
+
+    var allPersonData = new Array(sched.project.employee_num);
+    for (var stuff = 0; stuff < allPersonName.length; stuff++)
+        allPersonData[allPersonName[stuff]] = new Array();
+    for (var day = 0; day < dailyTask.length; day++) {
+        var today = dailyTask[day].today;
+        for (var stuff = 0; stuff < dailyTask[day].employee.length; stuff++) {
+            var personalName = dailyTask[day].employee[stuff].name;
+            var personalTask = dailyTask[day].employee[stuff].task;
+            if (personalTask) {
+                for (var task_num = 0; task_num < personalTask.length; task_num++) {
+                    allPersonData[personalName].push({
+                        taskDate: today,
+                        taskName: personalTask[task_num]
+                    });
+                }
+            }
+        }
+    }
+
+    var finalData = [];
+    for (var stuff = 0; stuff < sched.project.employee_num; stuff++) {
+        // 建立 allTask 紀錄目前這個 stuff 有的所有任務名字
+        var allTask = [];
+        for (var d = 0; d < allPersonData[allPersonName[stuff]].length; d++) {
+            var findInAllTask = (allTask.indexOf(allPersonData[allPersonName[stuff]][d].taskName) > -1);
+            if (!findInAllTask) allTask.push(allPersonData[allPersonName[stuff]][d].taskName);
+        }
+
+        // 建立 taskCategorize 可以放 taskCategorize["work1"] = ["20230601"];
+        var taskCategorize = new Array(allTask.length);
+        for (var al = 0; al < allTask.length; al++) {
+            taskCategorize[allTask[al]] = new Array();
+        }
+
+        // 放入確切數值, ex: taskCategorize["work1"] = ["20230601"];
+        for (var d = 0; d < allPersonData[allPersonName[stuff]].length; d++) {
+            taskCategorize[allPersonData[allPersonName[stuff]][d].taskName].push(allPersonData[allPersonName[stuff]][d].taskDate);
+        }
+        for (var d = 0; d < allPersonData[allPersonName[stuff]].length; d++) {
+            taskCategorize[allPersonData[allPersonName[stuff]][d].taskName].sort();
+        }
+
+        // 計算 duration 和 start_date
+        var taskWithDuration = [];
+        for (var taskC_i = 0; taskC_i < taskCategorize.length; taskC_i++) {
+            var workName = allTask[taskC_i]; // taskCategorize["work1"] 的 "work1"
+            var duration = [], start = [];
+            var continueDay = 0;
+            var begin = taskCategorize[workName][0];
+            for (var j = 0; j < taskCategorize[workName].length; j++) {
+                var curr = taskCategorize[workName][j];
+                if (dateDiff(begin, curr) != continueDay || j == taskCategorize[workName].length - 1) {
+                    duration.push(continueDay + 1);
+                    var startDate = [begin.slice(6, 8), begin.slice(4, 6), begin.slice(0, 4)].join('-');
+                    start.push(startDate);
+                    begin = taskCategorize[workName][j + 1];
+                    continueDay = 1;
+                }
+                else continueDay++;
+            }
+            taskWithDuration.push({
+                taskName: workName,
+                start: start,
+                duration: duration
+            });
+        }
+        finalData.push({
+            name: allPersonName[stuff],
+            task: taskWithDuration
+        });
+    }
+    return finalData;
 }
 

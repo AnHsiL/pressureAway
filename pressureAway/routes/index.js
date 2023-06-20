@@ -7,8 +7,10 @@ myModules = new myModules();
 router.post('/setPersonalTask', myModules.setPersonalTask);
 router.post('/getAllData', myModules.getAllData);
 router.post('/getAllPressureData', myModules.getAllPressureData);
-router.post('/getOriginalSched', myModules.getAllPressureData);
-router.post('/getNewSched', myModules.getAllPressureData);
+router.post('/toUnchangedStatus', myModules.toUnchangedStatus);
+router.post('/toChangedStatus', myModules.toChangedStatus);
+router.post('/getOriSched', myModules.getOriSched);
+router.post('/getNewSched', myModules.getNewSched);
 
 
 module.exports = router;

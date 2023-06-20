@@ -38,7 +38,11 @@ module.exports = class CRUD {
     }
 
     static async setPersonalTask(daily_task_idx, each_task_idx, newData) {
+<<<<<<< HEAD
         var path = "/project/daily_task/" + daily_task_idx + "/each_task/" + each_task_idx + "/task/task_detail";
+=======
+        var path = "/project/daily_task/"+ daily_task_idx + "/employee/"+ each_task_idx +"/task";
+>>>>>>> main
         console.log(path);
 
         try {
@@ -48,5 +52,18 @@ module.exports = class CRUD {
             console.error("Error reading document: ", e);
         }
     }
+<<<<<<< HEAD
 
+=======
+    static async setIsChange(is_toChange_status) {
+        var path = "/project/isChanged";
+        try {
+            db.ref(path).set('');
+            db.ref(path).set(is_toChange_status);
+        } catch (e) {
+            console.error("Error reading document: ", e);
+        }
+    }
+    
+>>>>>>> main
 }

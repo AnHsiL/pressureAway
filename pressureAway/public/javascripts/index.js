@@ -1,24 +1,28 @@
 $(document).ready(function () {
-    // gantt.init("gantt_here");
-    // gantt.load("./data/schedule.json");
-    // import data schedule.json
-    $("#btn_get").click(function () {
-        getAllData();
-    });
-    $("#btn_set").click(function () {
-        // var data = getAllData();
-        // console.log(data);
-        setPersonalTask(0, 1, "test");
-        // setPersonalTask($("#input_date").val(), $("#input_name").val(), $("#input_dataToChange").val());
-    })
+    getOriSched();
+
+    // $("#btn_set").click(function(){
+    //     setPersonalTask($("#input_date").val(), $("#input_name").val(), $("#input_dataToChange").val());
+    // })
 });
 
-function toStart() {
-    window.location.href = "./index.html";
-}
-
-function toSched() {
-    window.location.href = "./schedule.html";
+function getOriSched() {
+    $.ajax({
+        url: "/getOriSched",
+        type: "POST",
+        success: function (res) {
+            document.getElementById("all_data").innerHTML = JSON.stringify(res);
+        },
+        error: function (err) {
+            swal.fire({
+                title: "Error",
+                text: err,
+                icon: "error",
+            }).then(() => {
+                location.reload();
+            });
+        }
+    });
 }
 
 function getAllData() {
@@ -128,3 +132,31 @@ function changePersonalTask(date, name, dataToChange) {
         }
     });
 }
+function getNewSched() { // page 2
+    $.ajax({
+        url: "/getNewSched",
+        type: "POST",
+        success: function (res) {
+            document.getElementById("all_data").innerHTML = JSON.stringify(res);
+        },
+        error: function (err) {
+            swal.fire({
+                title: "Error",
+                text: err,
+                icon: "error",
+            }).then(() => {
+                location.reload();
+            });
+        }
+    });
+}
+
+function dateDiff(Date1_, Date2_) {
+    var Date1 = [Date1_.slice(0, 4), Date1_.slice(4, 6), Date1_.slice(6, 8)].join('-')
+    var Date2 = [Date2_.slice(0, 4), Date2_.slice(4, 6), Date2_.slice(6, 8)].join('-')
+
+    var date1 = new Date(Date1);
+    var date2 = new Date(Date2);
+    var milliseconds_Time = date2.getTime() - date1.getTime();
+    return milliseconds_Time / (1000 * 3600 * 24);
+};
