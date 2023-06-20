@@ -79,6 +79,12 @@ module.exports = class Controller {
             });
         });
     }
+    getNewSched(req, res, next){
+        var newSched = formatSched(req.body.newSched);
+        res.json({
+            newSched : newSched
+        });
+    }
 }
 
 function dateDiff(Date1_, Date2_){ 
@@ -120,10 +126,10 @@ function allPressStatus(data){
             var taskUnfinished = 0;
             for(var k = 0; k < eachTask.length; k++)
                 taskUnfinished++;
-            employee[stuff].complete_pa = 0;
+            data.daily_task[day].employee[stuff].complete_pa = 0;
             if(taskUnfinished > 0)
-                employee[stuff].complete_pa = (taskUnfinished / eachTask.length) * totalDay / lastDay;
-            else employee[stuff].complete_pa = 1;
+                data.daily_task[day].employee[stuff].complete_pa = (taskUnfinished / eachTask.length) * totalDay / lastDay;
+            else data.daily_task[day].employee[stuff].complete_pa = 1;
         }
     }
     
@@ -181,10 +187,12 @@ function PressureScore(pressureFactor){
         if (pressureFactor.makeup == 0)  score += 5;
         else if (pressureFactor.makeup == 5) score += 3;
     }
+
     if(pressureFactor.is_nap) score += nap_weight;
     if(pressureFactor.is_foodout) score += foodout_weight;
-    if(pressureFactor.over_suager_day >= 3) score += suager_weight*1.3;
-    else if(pressureFactor.over_suager_day >= 2) score += suager_weight*0.8;
+
+    if(pressureFactor.over_suager_day >= 3) score += suager_weight*1.1;
+    else if(pressureFactor.over_suager_day >= 2) score += suager_weight*0.6;
     else if(pressureFactor.over_suager_day >= 1) score += suager_weight*0.2;
   
     var screenTime = pressureFactor.screen_worktime / (7*60);
@@ -198,13 +206,13 @@ function PressureScore(pressureFactor){
     }
     score += screenTime * screen_weight;
 
-    if(pressureFactor.complete_pa > 10) score += 1.2 * complete_weight;
-    else if(pressureFactor.complete_pa > 5) score += 1.1 * complete_weight;
-    else if(pressureFactor.complete_pa > 3) score += complete_weight;
+    if(pressureFactor.complete_pa > 10) score += 1.1 * complete_weight;
+    else if(pressureFactor.complete_pa > 5) score += complete_weight;
+    else if(pressureFactor.complete_pa > 3) score += 80 / 100 * complete_weight;
     else if(pressureFactor.complete_pa > 1) score += 60 / 100 * pressureFactor.complete_pa * complete_weight;
     else if(pressureFactor.complete_pa > -1) score += 20 / 100 * complete_weight;
     else if(pressureFactor.complete_pa > -3) score += 10 / 100 * complete_weight;
-    return score;
+    return Math.round(score);
 }
   
 function formatSched(sched){
