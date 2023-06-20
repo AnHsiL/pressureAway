@@ -120,8 +120,8 @@ module.exports = class Controller {
         CRUD.readAllData()
             .then((r_data) => {
                 var allPressStatusArr = allPressStatus(r_data.project);
-                var newSched = formatSched(newSch(r_data.project, allPressStatusArr));
-                // var newSched = newSch(r_data.project, allPressStatusArr);
+                //var newSched = formatSched(newSch(r_data.project, allPressStatusArr));
+                var newSched = newSch(r_data.project, allPressStatusArr);
                 res.json(newSched);
             });
     }
@@ -166,7 +166,7 @@ function allPressStatus(data) {
 
             var eachTask = data.daily_task[day].employee[stuff].task;
             var taskUnfinished = 0;
-            if(eachTask) 
+            if (eachTask)
                 for (var k = 0; k < eachTask.length; k++)
                     taskUnfinished++;
             data.daily_task[day].employee[stuff].complete_pa = 0;
@@ -365,6 +365,7 @@ function newSch(Alldata, allPressStatusArr) {
     var web_be = [];
     var web_en = [];
     var task_move_re = [];
+    var check = 0;
     for (var i = 0; i < Alldata.employee_num; i++) {
         move[i] = [];
         web[i] = [];
@@ -379,20 +380,28 @@ function newSch(Alldata, allPressStatusArr) {
         var change_employee = [];
         var change_employee_ = {};
         for (var j = 0; j < Alldata.daily_task[i].employee.length; ++j) {
+            check = 0;
             var change_task = [];
             var change_task_detail = [];
             var count_ = 0;
             if (Alldata.daily_task[i].employee[j].task) {
                 for (var k = Alldata.daily_task[i].employee[j].task.length - 1; k >= 0; --k) {
-
-                    if (allPressStatusArr[i].pressArr[j] > 60 && Alldata.daily_task.length - i > 2) {
+                    for (var l = 0; l < task_move[j].length; ++l) {
+                        if (Alldata.daily_task[i].employee[j].task[k] == task_move[j][l].name) {
+                            check = 1;
+                        }
+                    }
+                    if (allPressStatusArr[i].pressArr[j] > 60 && Alldata.daily_task.length - i > 2 && k > 1 && check != 1) {
                         if (count_ < 2) {
+
                             move[j].push(JSON.parse(JSON.stringify(JSON.stringify(Alldata.daily_task[i].employee[j].task[k]))));
                             move_num[j]++;
                             count_++;
                             task_move_.name = JSON.parse(JSON.stringify(Alldata.daily_task[i].employee[j].task[k]));
                             task_move_.move_begin = JSON.parse(JSON.stringify(Alldata.daily_task[i].today));
                             task_move_.move_end = "";
+                            test.push(JSON.parse(JSON.stringify(Alldata.daily_task[i].employee[j].name)));
+                            test.push(JSON.parse(JSON.stringify(task_move_)));
                             task_move[j].push(JSON.parse(JSON.stringify(task_move_)));
                             task_move_re[j].push(JSON.parse(JSON.stringify(task_move_)));
                             web_.task_move = JSON.parse(JSON.stringify(task_move_re[j]));
@@ -412,7 +421,7 @@ function newSch(Alldata, allPressStatusArr) {
                     }
                 }
             }
-            if (allPressStatusArr[i].pressArr[j] > 29 && move_num[j] > 0 && i != 0) {
+            if (allPressStatusArr[i].pressArr[j] > 29 && move_num[j] > 0 && web[j].task_move[web_be[j]] != i && check != 1 && allPressStatusArr[i].pressArr[j] < 60) {
                 test.push(web[j].task_move[web_be[j]]);
                 test.push(0);
                 change_task_detail.push(JSON.parse(JSON.stringify(move[j][move_num[j] - 1])));
@@ -420,7 +429,7 @@ function newSch(Alldata, allPressStatusArr) {
                 web[j].task_move[web_be[j]].move_end = JSON.parse(JSON.stringify(Alldata.daily_task[i].today));
                 web_be[j]++;
             }
-            if (allPressStatusArr[i].pressArr[j] < 29 && move_num[j] > 0 && i != 0) {
+            if (allPressStatusArr[i].pressArr[j] < 29 && move_num[j] > 0 && check != 1 && web[j].task_move[web_be[j]] != i) {
                 if (move_num[j] > 1) {
                     change_task_detail.push(JSON.parse(JSON.stringify(move[j][move_num[j] - 1])));
                     move_num[j]--;
