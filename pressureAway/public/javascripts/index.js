@@ -129,10 +129,10 @@ function dateDiff(Date1_, Date2_) {
     return milliseconds_Time / (1000 * 3600 * 24);
 };
 
-function setNewSched(date, name, dataToChange) {
+function setNewSched(dataToChange) {
 
     $.ajax({
-        url: "/getAllData",
+        url: "/getNewSched",
         type: "POST",
         success: function (res) {
             setNewSchedData(dataToChange);
