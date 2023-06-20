@@ -38,7 +38,7 @@ module.exports = class CRUD {
     }
     
     static async setPersonalTask(daily_task_idx, each_task_idx, newData) {
-        var path = "/project/daily_task/"+ daily_task_idx + "/each_task/"+ each_task_idx +"/task/task_detail";
+        var path = "/project/daily_task/"+ daily_task_idx + "/employee/"+ each_task_idx +"/task";
         console.log(path);
 
         try {

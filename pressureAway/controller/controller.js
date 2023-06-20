@@ -19,7 +19,7 @@ module.exports = class Controller {
                     for(var i = 0; i < Object.keys(r_data.project.daily_task).length; i++){
                         if(req.body.date == r_data.project.daily_task[i].today){
                             for(var j = 0; j < r_data.project.employee_num; j++){
-                                if(req.body.name == r_data.project.daily_task[i].each_task[j].name){
+                                if(req.body.name == r_data.project.daily_task[i].employee[j].name){
                                     CRUD.setPersonalTask(i, j, newData)
                                     .then(() => {
                                         res.json({
@@ -40,7 +40,6 @@ module.exports = class Controller {
         CRUD.readAllData()
         .then((r_data) => {
             var allPressStatusArr = allPressStatus(r_data.project);
-
             res.json({
                 allPressStatusArr : allPressStatusArr
             });
@@ -97,7 +96,7 @@ function allPressStatus(data){
         var lastDay = dateDiff(data.daily_task[day].today, data.deadline);
 
         for(var stuff = 0; stuff < stuff_num; stuff++){
-            var eachPressureFactor = data.daily_task[day].each_task[stuff].pressure_factor;
+            var eachPressureFactor = data.daily_task[day].employee[stuff].pressure_factor;
             if(eachPressureFactor.sugar - totalSugar[stuff] / cntSugarDay[stuff] >= 2){
                 sugarContinue[stuff] += 1;
             }
@@ -108,15 +107,14 @@ function allPressStatus(data){
             }
             eachPressureFactor.over_suager_day = sugarContinue[stuff];
             
-            var eachTask = data.daily_task[day].each_task[stuff].task;
+            var eachTask = data.daily_task[day].employee[stuff].task;
             var taskUnfinished = 0;
-            for(var k = 0; k < eachTask.task_detail.length; k++)
-                if(!eachTask.task_detail[k].complete) 
-                    taskUnfinished += eachTask.task_detail[k].compress_rate;
-            eachTask.complete_pa = 0;
+            for(var k = 0; k < eachTask.length; k++)
+                taskUnfinished++;
+            employee[stuff].complete_pa = 0;
             if(taskUnfinished > 0)
-                eachTask.complete_pa = (taskUnfinished / eachTask.task_detail.length) * totalDay / lastDay;
-            else eachTask.complete_pa = 1;
+                employee[stuff].complete_pa = (taskUnfinished / eachTask.length) * totalDay / lastDay;
+            else employee[stuff].complete_pa = 1;
         }
     }
     
@@ -124,7 +122,7 @@ function allPressStatus(data){
         var dailyPressData_pressArr = [];
 
         for(var stuff = 0; stuff < stuff_num; stuff++){
-            var personalData = data.daily_task[day].each_task[stuff];
+            var personalData = data.daily_task[day].employee[stuff];
 
             var personalPress = {
                 name : personalData.name,
@@ -134,23 +132,20 @@ function allPressStatus(data){
                     screen_worktime  : personalData.pressure_factor.screen_worktime,
                     makeup           : personalData.pressure_factor.makeup,
                     over_suager_day  : personalData.pressure_factor.over_suager_day,
-                    is_meeting       : personalData.task.is_meeting,
-                    is_co_meeting    : personalData.task.is_co_meeting,
-                    complete_pa      : personalData.task.complete_pa
+                    is_meeting       : personalData.is_meeting,
+                    is_co_meeting    : personalData.is_co_meeting,
+                    complete_pa      : personalData.complete_pa
                 }
             };
 
             var score = PressureScore(personalPress.pressure_factor);
-            if(score >= 66) dailyPressData_pressArr.push(1);
-            else if(score <= 33) dailyPressData_pressArr.push(-1);
-            else dailyPressData_pressArr.push(0);
+            dailyPressData_pressArr.push(score);
         }
 
-        var dailyPressData = {
+        allPressData.push({
             date: data.daily_task[day].today,
             pressArr : dailyPressData_pressArr
-        };
-        allPressData.push(dailyPressData)
+        })
     }
     return allPressData;
 };
