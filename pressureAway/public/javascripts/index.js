@@ -128,3 +128,48 @@ function dateDiff(Date1_, Date2_) {
     var milliseconds_Time = date2.getTime() - date1.getTime();
     return milliseconds_Time / (1000 * 3600 * 24);
 };
+
+function setNewSched(date, name, dataToChange) {
+
+    $.ajax({
+        url: "/getAllData",
+        type: "POST",
+        success: function (res) {
+            setNewSchedData(dataToChange);
+        },
+        error: function (err) {
+            swal.fire({
+                title: "getAllData_error",
+                text: err,
+                icon: "error",
+            }).then(() => {
+                location.reload();
+            });
+        }
+    });
+
+}
+function setNewSchedData(dataToChange) {
+
+    var data = {
+        dataToChange: dataToChange
+    };
+
+    $.ajax({
+        url: "/setNewSched",
+        type: "POST",
+        data: data,
+        success: function (res) {
+            document.getElementById("all_data").innerHTML = JSON.stringify(res);
+        },
+        error: function (err) {
+            swal.fire({
+                title: "Error",
+                text: err,
+                icon: "error",
+            }).then(() => {
+                location.reload();
+            });
+        }
+    });
+}
