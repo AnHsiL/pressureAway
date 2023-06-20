@@ -36,47 +36,35 @@ for (var i = 0; i < Alldata.employee_num; i++) {
     task_move_re[i] = [];
 }
 for (var i = 0; i < Alldata.daily_task.length; i++) {
-    var change_each_task = [];
-    var change_each_task_ = {};
-    for (var j = 0; j < Alldata.daily_task[i].each_task.length; ++j) {
-        var change_task = {};
+    var change_employee = [];
+    var change_employee_ = {};
+    for (var j = 0; j < Alldata.daily_task[i].employee.length; ++j) {
+        var change_task = [];
         var change_task_detail = [];
         var count_ = 0;
-        for (var k = Alldata.daily_task[i].each_task[j].task.task_detail.length - 1; k >= 0; --k) {
-            var check = 0;
-            for (var l = 0; l < move_num[j]; ++l) {
-                if (move[j][l].task_detail.name == Alldata.daily_task[i].each_task[j].task.task_detail[k].name && move[j][l].name == Alldata.daily_task[i].each_task[j].name) {
-                    check = 1;
-                    break;
-                }
-            }
-            test.push(allPressStatusArr[i].pressArr[j] == 1);
+        for (var k = Alldata.daily_task[i].employee[j].task.length - 1; k >= 0; --k) {
+
             if (allPressStatusArr[i].pressArr[j] == 1 && Alldata.daily_task.length - i > 2) {
-                if (Alldata.daily_task[i].each_task[j].task.task_detail[k].complete == false && count_ < 2 && check != 1) {
-                    move_detail.task_detail = JSON.parse(JSON.stringify(Alldata.daily_task[i].each_task[j].task.task_detail[k]));
-                    move_detail.name = JSON.parse(JSON.stringify(Alldata.daily_task[i].each_task[j].name));
-                    move_detail.date = JSON.parse(JSON.stringify(Alldata.daily_task[i].today));
-                    move[j].push(JSON.parse(JSON.stringify(move_detail)));
+                if (count_ < 2) {
+                    move[j].push(JSON.parse(JSON.stringify(JSON.stringify(Alldata.daily_task[i].employee[j].task[k]))));
                     move_num[j]++;
                     count_++;
-                    task_move_.name = JSON.parse(JSON.stringify(Alldata.daily_task[i].each_task[j].task.task_detail[k].name));
+                    task_move_.name = JSON.parse(JSON.stringify(Alldata.daily_task[i].employee[j].task[k]));
                     task_move_.move_begin = JSON.parse(JSON.stringify(Alldata.daily_task[i].today));
                     task_move_.move_end = "";
                     task_move[j].push(JSON.parse(JSON.stringify(task_move_)));
                     task_move_re[j].push(JSON.parse(JSON.stringify(task_move_)));
                     web_.task_move = JSON.parse(JSON.stringify(task_move_re[j]));
-                    web_.name = JSON.parse(JSON.stringify(Alldata.daily_task[i].each_task[j].name));
+                    web_.name = JSON.parse(JSON.stringify(Alldata.daily_task[i].employee[j].name));
 
                     web[j] = JSON.parse(JSON.stringify(web_));
                 }
                 else {
-                    if (check != 1)
-                        change_task_detail[k] = JSON.parse(JSON.stringify(Alldata.daily_task[i].each_task[j].task.task_detail[k]));
+                    change_task_detail[k] = JSON.parse(JSON.stringify(Alldata.daily_task[i].employee[j].task[k]));
                 }
             }
             else {
-                if (check != 1)
-                    change_task_detail[k] = JSON.parse(JSON.stringify(Alldata.daily_task[i].each_task[j].task.task_detail[k]));
+                change_task_detail[k] = JSON.parse(JSON.stringify(Alldata.daily_task[i].employee[j].task[k]));
             }
 
         }
@@ -112,15 +100,15 @@ for (var i = 0; i < Alldata.daily_task.length; i++) {
                 web_be[j]++;
             }
         }
-        change_task.task_detail = JSON.parse(JSON.stringify(change_task_detail));
-        change_task.is_meeting = Alldata.daily_task[i].each_task[j].task.is_meeting;
-        change_task.is_co_meeting = Alldata.daily_task[i].each_task[j].task.is_co_meeting;
-        change_each_task_.name = JSON.parse(JSON.stringify(Alldata.daily_task[i].each_task[j].name));
-        change_each_task_.task = JSON.parse(JSON.stringify(change_task));
-        change_each_task_.pressure_factor = JSON.parse(JSON.stringify(Alldata.daily_task[i].each_task[j].pressure_factor));
-        change_each_task[j] = JSON.parse(JSON.stringify(change_each_task_));
+        change_task = JSON.parse(JSON.stringify(change_task_detail));
+        change_employee_.is_meeting = Alldata.daily_task[i].employee[j].is_meeting;
+        change_employee_.is_co_meeting = Alldata.daily_task[i].employee[j].is_co_meeting;
+        change_employee_.name = JSON.parse(JSON.stringify(Alldata.daily_task[i].employee[j].name));
+        change_employee_.task = JSON.parse(JSON.stringify(change_task));
+        change_employee_.pressure_factor = JSON.parse(JSON.stringify(Alldata.daily_task[i].employee[j].pressure_factor));
+        change_employee[j] = JSON.parse(JSON.stringify(change_employee_));
     }
-    changedaily_task_.each_task = JSON.parse(JSON.stringify(change_each_task));
+    changedaily_task_.employee = JSON.parse(JSON.stringify(change_employee));
     changedaily_task_.today = Alldata.daily_task[i].today;
     changedaily_task[i] = JSON.parse(JSON.stringify(changedaily_task_));
 }
