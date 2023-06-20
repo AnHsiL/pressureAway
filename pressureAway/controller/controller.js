@@ -125,7 +125,17 @@ module.exports = class Controller {
                 res.json(newSched);
             });
     }
-
+    getIsChanged(req, res, next){
+        try {
+            CRUD.readIsChanged()
+                .then((data) => {
+                    console.log(data)
+                    res.json(data);
+                });
+        } catch (err) {
+            res.err();
+        }
+    }
 }
 
 function dateDiff(Date1_, Date2_) {

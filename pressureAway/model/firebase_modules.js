@@ -36,6 +36,18 @@ module.exports = class CRUD {
             console.error("Error reading document: ", e);
         }
     }
+    static async readIsChanged() {
+        try {
+            return new Promise((resolve) => {
+                db.ref('/project/isChanged').on('value', e => {
+                    resolve(e.val());
+                });
+            });
+
+        } catch (e) {
+            console.error("Error reading document: ", e);
+        }
+    }
     static async setNewSched(newData) {
         var path = "/";
 

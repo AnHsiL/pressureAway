@@ -7,6 +7,7 @@ myModules = new myModules();
 router.post('/setPersonalTask', myModules.setPersonalTask);
 router.post('/getAllData', myModules.getAllData);
 router.post('/getAllPressureData', myModules.getAllPressureData);
+router.post('/getIsChanged', myModules.getIsChanged);
 router.post('/toUnchangedStatus', myModules.toUnchangedStatus);
 router.post('/toChangedStatus', myModules.toChangedStatus);
 router.post('/getOriSched', myModules.getOriSched);
