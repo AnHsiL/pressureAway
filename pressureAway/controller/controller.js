@@ -11,6 +11,25 @@ module.exports = class Controller {
             res.err();
         }
     }
+    setNewSched(req, res, next) {
+        try {
+            CRUD.readAllData()
+                .then((r_data) => {
+                    // console.log(r_data.project)
+                    var allPressStatusArr = allPressStatus(r_data.project);
+                    var newSched = newSch(r_data.project, allPressStatusArr);
+                    // var newSched = newSch(r_data.project, allPressStatusArr);
+                    CRUD.setNewSched(newSched)
+                        .then(() => {
+                            res.json({
+                                status: "succ",
+                            });
+                        });
+                });
+        } catch (err) {
+            res.err();
+        }
+    }
     setPersonalTask(req, res, next) {
         var newData = req.body.dataToChange;
         try {
@@ -44,33 +63,78 @@ module.exports = class Controller {
                 res.json({
                     allPressStatusArr: allPressStatusArr
                 });
-            });
 
-    }
+            }
+    getAvgPressureScore(req, res, next) {
+                var dateToAsk = req.body.today;
+                CRUD.readAllData()
+                    .then((r_data) => {
+                        var allPressStatusArr = allPressStatus(r_data.project);
+                        var stuff_num, allPressureScore = 0;
+                        for (var i = 0; i < allPressStatusArr.length; i++) {
+                            stuff_num = allPressStatusArr[i].pressArr.length
+                            if (allPressStatusArr[i].date == dateToAsk) {
+                                for (var j = 0; j < allPressStatusArr[i].pressArr.length; j++)
+                                    allPressureScore += allPressStatusArr[i].pressArr[j];
+                            }
+                        }
+                        var avg_pressScore = Math.round(allPressureScore / stuff_num);
+                        res.json({
+                            avg_pressScore: avg_pressScore
+                        });
+                    });
+            }
     toUnchangedStatus(req, res, next) {
-        try {
-            CRUD.setIsChange(false)
-                .then(() => {
-                    res.json({
-                        status: "succ",
-                    });
-                });
-        } catch (err) {
-            res.err();
-        }
-    }
+                try {
+                    CRUD.setIsChange(false)
+                        .then(() => {
+                            res.json({
+                                status: "succ",
+                            });
+                        });
+                } catch(err) {
+                    res.err();
+                }
+            }
     toChangedStatus(req, res, next) {
-        try {
-            CRUD.setIsChange(true)
-                .then(() => {
-                    res.json({
-                        status: "succ",
+                try {
+                    CRUD.setIsChange(true)
+                        .then(() => {
+                            res.json({
+                                status: "succ",
+                            });
+                        });
+                } catch(err) {
+                    res.err();
+                }
+            }
+    getOriSched(req, res, next) {
+                CRUD.readAllData()
+                    .then((r_data) => {
+                        var oriSched = formatSched(r_data);
+                        res.json(oriSched);
                     });
-                });
-        } catch (err) {
-            res.err();
-        }
-    }
+            }
+    getNewSched(req, res, next) {
+                CRUD.readAllData()
+                    .then((r_data) => {
+                        var allPressStatusArr = allPressStatus(r_data.project);
+                        var newSched = formatSched(newSch(r_data.project, allPressStatusArr));
+                        //var newSched = newSch(r_data.project, allPressStatusArr);
+                        res.json(newSched);
+                    });
+            }
+    getIsChanged(req, res, next) {
+                try {
+                    CRUD.readIsChanged()
+                        .then((data) => {
+                            console.log(data)
+                            res.json(data);
+                        });
+                } catch(err) {
+                    res.err();
+                }
+            }
 }
 
 function dateDiff(Date1_, Date2_) {
@@ -110,13 +174,13 @@ function allPressStatus(data) {
 
             var eachTask = data.daily_task[day].employee[stuff].task;
             var taskUnfinished = 0;
-            // for(var k = 0; k < eachTask.task_detail.length; k++)
-            //     if(!eachTask.task_detail[k].complete) 
-            //         taskUnfinished += eachTask.task_detail[k].compress_rate;
-            // eachTask.complete_pa = 0;
-            // if(taskUnfinished > 0)
-            //     eachTask.complete_pa = (taskUnfinished / eachTask.task_detail.length) * totalDay / lastDay;
-            // else eachTask.complete_pa = 1;
+            for (var k = 0; k < eachTask.task_detail.length; k++)
+                if (!eachTask.task_detail[k].complete)
+                    taskUnfinished += eachTask.task_detail[k].compress_rate;
+            eachTask.complete_pa = 0;
+            if (taskUnfinished > 0)
+                eachTask.complete_pa = (taskUnfinished / eachTask.task_detail.length) * totalDay / lastDay;
+            else eachTask.complete_pa = 1;
         }
     }
 
@@ -134,9 +198,9 @@ function allPressStatus(data) {
                     screen_worktime: personalData.pressure_factor.screen_worktime,
                     makeup: personalData.pressure_factor.makeup,
                     over_suager_day: personalData.pressure_factor.over_suager_day,
-                    is_meeting: personalData.is_meeting,
-                    is_co_meeting: personalData.is_co_meeting
-                    // complete_pa      : personalData.task.complete_pa
+                    is_meeting: personalData.task.is_meeting,
+                    is_co_meeting: personalData.task.is_co_meeting,
+                    complete_pa: personalData.task.complete_pa
                 }
             };
 
@@ -146,7 +210,7 @@ function allPressStatus(data) {
             else dailyPressData_pressArr.push(0);
         }
 
-        var dailyPressData = {
+        allPressData.push({
             date: data.daily_task[day].today,
             pressArr: dailyPressData_pressArr
         };
@@ -194,12 +258,12 @@ function PressureScore(pressureFactor) {
     }
     score += screenTime * screen_weight;
 
-    // if (pressureFactor.complete_pa > 10) score += 1.2 * complete_weight;
-    // else if (pressureFactor.complete_pa > 5) score += 1.1 * complete_weight;
-    // else if (pressureFactor.complete_pa > 3) score += complete_weight;
-    // else if (pressureFactor.complete_pa > 1) score += 60 / 100 * pressureFactor.complete_pa * complete_weight;
-    // else if (pressureFactor.complete_pa > -1) score += 20 / 100 * complete_weight;
-    // else if (pressureFactor.complete_pa > -3) score += 10 / 100 * complete_weight;
+    if (pressureFactor.complete_pa > 10) score += 1.2 * complete_weight;
+    else if (pressureFactor.complete_pa > 5) score += 1.1 * complete_weight;
+    else if (pressureFactor.complete_pa > 3) score += complete_weight;
+    else if (pressureFactor.complete_pa > 1) score += 60 / 100 * pressureFactor.complete_pa * complete_weight;
+    else if (pressureFactor.complete_pa > -1) score += 20 / 100 * complete_weight;
+    else if (pressureFactor.complete_pa > -3) score += 10 / 100 * complete_weight;
     return score;
 }
 
