@@ -9,6 +9,7 @@ router.post('/getAllData', myModules.getAllData);
 router.post('/getAllPressureData', myModules.getAllPressureData);
 router.post('/toUnchangedStatus', myModules.toUnchangedStatus);
 router.post('/toChangedStatus', myModules.toChangedStatus);
+router.post('/getOriSched', myModules.getOriSched);
 
 
 module.exports = router;

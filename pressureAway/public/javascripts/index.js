@@ -1,10 +1,29 @@
 $(document).ready(function () {
-	getAllData();
+	getOriSched();
     
     // $("#btn_set").click(function(){
     //     setPersonalTask($("#input_date").val(), $("#input_name").val(), $("#input_dataToChange").val());
     // })
 });
+
+function getOriSched(){
+     $.ajax({
+        url: "/getOriSched",
+        type: "POST",
+        success: function (res) {
+            document.getElementById("all_data").innerHTML = JSON.stringify(res);
+        },
+        error: function (err) {
+            swal.fire({
+                title: "Error",
+                text: err,
+                icon: "error",
+            }).then(() => {
+                location.reload();
+            });
+        }
+    });
+}
 
 function getAllData(){
     $.ajax({

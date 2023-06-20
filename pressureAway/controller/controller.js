@@ -70,6 +70,15 @@ module.exports = class Controller {
             res.err();
         }
     }
+    getOriSched(req, res, next){
+        CRUD.readAllData()
+        .then((r_data) => {
+            var oriSched = formatSched(r_data);
+            res.json({
+                oriSched : oriSched
+            });
+        });
+    }
 }
 
 function dateDiff(Date1_, Date2_){ 
@@ -198,4 +207,86 @@ function PressureScore(pressureFactor){
     return score;
 }
   
+function formatSched(sched){
+    var dailyTask = sched.project.daily_task;
+
+    var allPersonName = new Array(sched.project.employee_num);
+    for(var day = 0; day < dailyTask.length; day++){
+        for(var stuff = 0; stuff < dailyTask[day].employee.length; stuff++){
+            allPersonName[stuff] = dailyTask[day].employee[stuff].name;
+        }
+    }
+
+    var allPersonData = new Array(sched.project.employee_num);
+    for(var stuff = 0; stuff < allPersonName.length; stuff++)
+        allPersonData[allPersonName[stuff]] = new Array();
+    for(var day = 0; day < dailyTask.length; day++){
+        var today = dailyTask[day].today;
+        for(var stuff = 0; stuff < dailyTask[day].employee.length; stuff++){
+            var personalName = dailyTask[day].employee[stuff].name;
+            var personalTask = dailyTask[day].employee[stuff].task;
+            if(personalTask){
+                for(var task_num = 0; task_num < personalTask.length; task_num++){
+                    allPersonData[personalName].push({
+                        taskDate: today,
+                        taskName: personalTask[task_num]
+                    });
+                }  
+            }
+        }
+    }
+
+    var finalData = [];
+    for(var stuff = 0; stuff < sched.project.employee_num; stuff++){
+        // 建立 allTask 紀錄目前這個 stuff 有的所有任務名字
+        var allTask = [];
+        for(var d = 0; d < allPersonData[allPersonName[stuff]].length; d++){
+            var findInAllTask = (allTask.indexOf(allPersonData[allPersonName[stuff]][d].taskName) > -1);
+            if(!findInAllTask) allTask.push(allPersonData[allPersonName[stuff]][d].taskName);
+        }
+
+        // 建立 taskCategorize 可以放 taskCategorize["work1"] = ["20230601"];
+        var taskCategorize = new Array(allTask.length);
+        for(var al = 0; al < allTask.length; al++){
+            taskCategorize[allTask[al]] = new Array();
+        }
+
+        // 放入確切數值, ex: taskCategorize["work1"] = ["20230601"];
+        for(var d = 0; d < allPersonData[allPersonName[stuff]].length; d++){
+            taskCategorize[allPersonData[allPersonName[stuff]][d].taskName].push(allPersonData[allPersonName[stuff]][d].taskDate);
+        }
+        for(var d = 0; d < allPersonData[allPersonName[stuff]].length; d++){
+            taskCategorize[allPersonData[allPersonName[stuff]][d].taskName].sort();
+        }
+
+        // 計算 duration 和 start_date
+        var taskWithDuration = [];
+        for(var taskC_i = 0; taskC_i < taskCategorize.length; taskC_i++){   
+            var workName = allTask[taskC_i]; // taskCategorize["work1"] 的 "work1"
+            var duration = [], start = [];
+            var continueDay = 0;
+            var begin = taskCategorize[workName][0];
+            for(var j = 0; j < taskCategorize[workName].length; j++){
+                var curr = taskCategorize[workName][j];
+                if(dateDiff(begin, curr) != continueDay || j == taskCategorize[workName].length-1){
+                    duration.push(continueDay+1);
+                    start.push(begin);
+                    begin = taskCategorize[workName][j+1];
+                    continueDay = 1;
+                }
+                else continueDay++;
+            }
+            taskWithDuration.push({
+                taskName: workName,
+                start: start,
+                duration: duration
+            });
+        }
+        finalData.push({
+            name: allPersonName[stuff],
+            task: taskWithDuration
+        });
+    }
+    return finalData;
+}
   
