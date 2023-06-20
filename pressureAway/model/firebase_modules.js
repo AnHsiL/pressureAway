@@ -36,7 +36,28 @@ module.exports = class CRUD {
             console.error("Error reading document: ", e);
         }
     }
+    static async readIsChanged() {
+        try {
+            return new Promise((resolve) => {
+                db.ref('/project/isChanged').on('value', e => {
+                    resolve(e.val());
+                });
+            });
 
+        } catch (e) {
+            console.error("Error reading document: ", e);
+        }
+    }
+    static async setNewSched(newData) {
+        var path = "/";
+
+        try {
+            db.ref(path).set('');
+            db.ref(path).set(newData);
+        } catch (e) {
+            console.error("Error reading document: ", e);
+        }
+    }
     static async setPersonalTask(daily_task_idx, each_task_idx, newData) {
         var path = "/project/daily_task/" + daily_task_idx + "/employee/" + each_task_idx + "/task";
         console.log(path);

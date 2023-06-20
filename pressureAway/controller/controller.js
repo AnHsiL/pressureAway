@@ -11,6 +11,25 @@ module.exports = class Controller {
             res.err();
         }
     }
+    setNewSched(req, res, next) {
+        try {
+            CRUD.readAllData()
+                .then((r_data) => {
+                    // console.log(r_data.project)
+                    var allPressStatusArr = allPressStatus(r_data.project);
+                    var newSched = newSch(r_data.project, allPressStatusArr);
+                    // var newSched = newSch(r_data.project, allPressStatusArr);
+                    CRUD.setNewSched(newSched)
+                        .then(() => {
+                            res.json({
+                                status: "succ",
+                            });
+                        });
+                });
+        } catch (err) {
+            res.err();
+        }
+    }
     setPersonalTask(req, res, next) {
         var newData = req.body.dataToChange;
         try {
@@ -40,13 +59,30 @@ module.exports = class Controller {
         CRUD.readAllData()
             .then((r_data) => {
                 var allPressStatusArr = allPressStatus(r_data.project);
-
                 res.json({
                     allPressStatusArr: allPressStatusArr
                 });
             });
 
-
+    }
+    getAvgPressureScore(req, res, next) {
+        var dateToAsk = req.body.today;
+        CRUD.readAllData()
+            .then((r_data) => {
+                var allPressStatusArr = allPressStatus(r_data.project);
+                var stuff_num, allPressureScore = 0;
+                for (var i = 0; i < allPressStatusArr.length; i++) {
+                    stuff_num = allPressStatusArr[i].pressArr.length
+                    if (allPressStatusArr[i].date == dateToAsk) {
+                        for (var j = 0; j < allPressStatusArr[i].pressArr.length; j++)
+                            allPressureScore += allPressStatusArr[i].pressArr[j];
+                    }
+                }
+                var avg_pressScore = Math.round(allPressureScore / stuff_num);
+                res.json({
+                    avg_pressScore: avg_pressScore
+                });
+            });
     }
     toUnchangedStatus(req, res, next) {
         try {
@@ -79,17 +115,25 @@ module.exports = class Controller {
                 res.json(oriSched);
             });
     }
-    // getNewSched(req, res, next) {
-    //     var newSched = formatSched(req.body.newSched);
-    //     res.json(newSched);
-    // }
     getNewSched(req, res, next) {
         CRUD.readAllData()
             .then((r_data) => {
                 var allPressStatusArr = allPressStatus(r_data.project);
-                var newSched = formatSched(newSch(r_data.project, allPressStatusArr));
+                //var newSched = formatSched(newSch(r_data.project, allPressStatusArr));
+                var newSched = newSch(r_data.project, allPressStatusArr);
                 res.json(newSched);
             });
+    }
+    getIsChanged(req, res, next) {
+        try {
+            CRUD.readIsChanged()
+                .then((data) => {
+                    console.log(data)
+                    res.json(data);
+                });
+        } catch (err) {
+            res.err();
+        }
     }
     setNewSched(req, res, next) {
         try {
@@ -217,7 +261,7 @@ function PressureScore(pressureFactor) {
     if (pressureFactor.is_nap) score += nap_weight;
     if (pressureFactor.is_foodout) score += foodout_weight;
 
-    if (pressureFactor.over_suager_day >= 3) score += suager_weight * 1.1;
+    if (pressureFactor.over_suager_day >= 3) score += suager_weight * 1;
     else if (pressureFactor.over_suager_day >= 2) score += suager_weight * 0.6;
     else if (pressureFactor.over_suager_day >= 1) score += suager_weight * 0.2;
 
@@ -232,17 +276,16 @@ function PressureScore(pressureFactor) {
     }
     score += screenTime * screen_weight;
 
-    if (pressureFactor.complete_pa > 10) score += 1.1 * complete_weight;
-    else if (pressureFactor.complete_pa > 5) score += complete_weight;
-    else if (pressureFactor.complete_pa > 3) score += 80 / 100 * complete_weight;
-    else if (pressureFactor.complete_pa > 1) score += 60 / 100 * pressureFactor.complete_pa * complete_weight;
+    if (pressureFactor.complete_pa > 10) score += complete_weight;
+    else if (pressureFactor.complete_pa > 5) score += 90 / 100 * complete_weight;
+    else if (pressureFactor.complete_pa > 3) score += 70 / 100 * complete_weight;
+    else if (pressureFactor.complete_pa > 1) score += 50 / 100 * pressureFactor.complete_pa * complete_weight;
     else if (pressureFactor.complete_pa > -1) score += 20 / 100 * complete_weight;
     else if (pressureFactor.complete_pa > -3) score += 10 / 100 * complete_weight;
     return Math.round(score);
 }
 
 function formatSched(sched) {
-    console.log
     var dailyTask = sched.project.daily_task;
 
     var allPersonName = new Array(sched.project.employee_num);
@@ -327,7 +370,6 @@ function formatSched(sched) {
 }
 
 function newSch(Alldata, allPressStatusArr) {
-    console.log('allPressStatusArr');
     var All = {};
     var ALL = {};
     All.name = Alldata.name;
@@ -352,6 +394,7 @@ function newSch(Alldata, allPressStatusArr) {
     var web_be = [];
     var web_en = [];
     var task_move_re = [];
+    var check = 0;
     for (var i = 0; i < Alldata.employee_num; i++) {
         move[i] = [];
         web[i] = [];
@@ -366,20 +409,28 @@ function newSch(Alldata, allPressStatusArr) {
         var change_employee = [];
         var change_employee_ = {};
         for (var j = 0; j < Alldata.daily_task[i].employee.length; ++j) {
+            check = 0;
             var change_task = [];
             var change_task_detail = [];
             var count_ = 0;
-            if (Alldata.daily_task[i].employee[j].task)
+            if (Alldata.daily_task[i].employee[j].task) {
                 for (var k = Alldata.daily_task[i].employee[j].task.length - 1; k >= 0; --k) {
-
-                    if (allPressStatusArr[i].pressArr[j] > 60 && Alldata.daily_task.length - i > 2) {
+                    for (var l = 0; l < task_move[j].length; ++l) {
+                        if (Alldata.daily_task[i].employee[j].task[k] == task_move[j][l].name) {
+                            check = 1;
+                        }
+                    }
+                    if (allPressStatusArr[i].pressArr[j] > 60 && Alldata.daily_task.length - i > 2 && k > 1 && check != 1) {
                         if (count_ < 2) {
+
                             move[j].push(JSON.parse(JSON.stringify(JSON.stringify(Alldata.daily_task[i].employee[j].task[k]))));
                             move_num[j]++;
                             count_++;
                             task_move_.name = JSON.parse(JSON.stringify(Alldata.daily_task[i].employee[j].task[k]));
                             task_move_.move_begin = JSON.parse(JSON.stringify(Alldata.daily_task[i].today));
                             task_move_.move_end = "";
+                            test.push(JSON.parse(JSON.stringify(Alldata.daily_task[i].employee[j].name)));
+                            test.push(JSON.parse(JSON.stringify(task_move_)));
                             task_move[j].push(JSON.parse(JSON.stringify(task_move_)));
                             task_move_re[j].push(JSON.parse(JSON.stringify(task_move_)));
                             web_.task_move = JSON.parse(JSON.stringify(task_move_re[j]));
@@ -397,15 +448,17 @@ function newSch(Alldata, allPressStatusArr) {
                     else {
                         change_task_detail[k] = JSON.parse(JSON.stringify(Alldata.daily_task[i].employee[j].task[k]));
                     }
-
                 }
-            if (allPressStatusArr[i].pressArr[j] > 29 && move_num[j] > 0) {
+            }
+            if (allPressStatusArr[i].pressArr[j] > 29 && move_num[j] > 0 && web[j].task_move[web_be[j]] != i && check != 1 && allPressStatusArr[i].pressArr[j] < 60) {
+                test.push(web[j].task_move[web_be[j]]);
+                test.push(0);
                 change_task_detail.push(JSON.parse(JSON.stringify(move[j][move_num[j] - 1])));
                 move_num[j]--;
                 web[j].task_move[web_be[j]].move_end = JSON.parse(JSON.stringify(Alldata.daily_task[i].today));
                 web_be[j]++;
             }
-            if (allPressStatusArr[i].pressArr[j] < 29 && move_num[j] > 0) {
+            if (allPressStatusArr[i].pressArr[j] < 29 && move_num[j] > 0 && check != 1 && web[j].task_move[web_be[j]] != i) {
                 if (move_num[j] > 1) {
                     change_task_detail.push(JSON.parse(JSON.stringify(move[j][move_num[j] - 1])));
                     move_num[j]--;
@@ -447,5 +500,4 @@ function newSch(Alldata, allPressStatusArr) {
     ALL.project = JSON.parse(JSON.stringify(All));
 
     return ALL;
-
 }
