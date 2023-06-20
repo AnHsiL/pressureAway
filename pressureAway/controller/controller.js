@@ -278,7 +278,8 @@ function formatSched(sched){
                 var curr = taskCategorize[workName][j];
                 if(dateDiff(begin, curr) != continueDay || j == taskCategorize[workName].length-1){
                     duration.push(continueDay+1);
-                    start.push(begin);
+                    var startDate = [begin.slice(6,8), begin.slice(4,6), begin.slice(0,4)].join('-') ;
+                    start.push(startDate);
                     begin = taskCategorize[workName][j+1];
                     continueDay = 1;
                 }
