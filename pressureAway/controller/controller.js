@@ -332,30 +332,33 @@ function formatSched(sched) {
     } console.log(allTask);
     // 計算 duration 和 start_date
     var taskWithDuration = [];
-    //for (var taskC_i = 0; taskC_i < taskCategorize.length; taskC_i++) {
-    var workName = allTask[8]; // taskCategorize["work1"] 的 "work1"
+    for (var taskC_i = 0; taskC_i < taskCategorize.length; taskC_i++) {
+        var workName = allTask[taskC_i]; // taskCategorize["work1"] 的 "work1"
 
-    var duration = [], start = [];
-    var continueDay = 0;
-    var begin = taskCategorize[workName][0];
-    for (var j = 0; j < taskCategorize[workName].length; j++) {
-        var curr = taskCategorize[workName][j];
-        console.log("datediff" + dateDiff(begin, curr));
-        if (dateDiff(begin, curr) != continueDay || j == taskCategorize[workName].length - 1) {
-            duration.push(continueDay);
-            var startDate = [begin.slice(6, 8), begin.slice(4, 6), begin.slice(0, 4)].join('-');
-            start.push(startDate);
-            begin = taskCategorize[workName][j];
-            continueDay = 1;
+        var duration = [], start = [];
+        var continueDay = 0;
+        var begin = taskCategorize[workName][0];
+        for (var j = 0; j < taskCategorize[workName].length; j++) {
+            var curr = taskCategorize[workName][j];
+            console.log("datediff" + dateDiff(begin, curr));
+            if (dateDiff(begin, curr) != continueDay || j == taskCategorize[workName].length - 1) {
+                if (j == taskCategorize[workName].length - 1)
+                    duration.push(continueDay + 1);
+                else
+                    duration.push(continueDay);
+                var startDate = [begin.slice(6, 8), begin.slice(4, 6), begin.slice(0, 4)].join('-');
+                start.push(startDate);
+                begin = taskCategorize[workName][j];
+                continueDay = 1;
+            }
+            else continueDay++;
         }
-        else continueDay++;
+        taskWithDuration.push({
+            taskName: workName,
+            start: start,
+            duration: duration
+        });
     }
-    taskWithDuration.push({
-        taskName: workName,
-        start: start,
-        duration: duration
-    });
-    //}
 
     finalData.push({
         name: allPersonName[stuff],
