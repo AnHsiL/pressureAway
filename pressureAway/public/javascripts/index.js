@@ -195,17 +195,6 @@ function setNewSchedData(dataToChange) {
         }
     });
 }
-<<<<<<< HEAD
-function getNewSchedSub() {
-
-
-    $.ajax({
-        url: "/getNewSchedSub",
-        type: "POST",
-        data: data,
-        success: function (res) {
-            document.getElementById("all_data").innerHTML = JSON.stringify(res);
-=======
 
 function getPressureScore() {
     var date = new Date();
@@ -225,7 +214,6 @@ function getPressureScore() {
         data: data,
         success: function (res) {
             document.getElementById("btn_pressure").innerText = "Pressure Score" + res.avg_pressScore;
->>>>>>> bb9e836ad0e975a55034c91d7628835cc7d88d9b
         },
         error: function (err) {
             swal.fire({
