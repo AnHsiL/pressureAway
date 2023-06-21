@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <title>Schedule</title>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="./css/index.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/css/bootstrap.min.css">
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js"></script>
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.0/jquery.min.js"></script>
+  <script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@10"></script>
+  <link rel="stylesheet" type="text/css" href="https://docs.dhtmlx.com/gantt/codebase/dhtmlxgantt.css">
+  <link href="./css/gantt.css" rel="stylesheet" type="text/css" />
+  <script src="https://docs.dhtmlx.com/gantt/codebase/dhtmlxgantt.js?v=6.1.7"></script>
+  <script src="./javascripts/gantt.js"></script>
+  <script src="./javascripts/schedule.js"></script>
+</head>
+
+<body>
+  <h1>New Schedule</h1>
+  <button id="btn_back" class="btn-orange-outline" onclick="toStart()">back to index</button>
+  <button id="btn_set" class="btn-orange" onclick="setNewSched()">save to firebase</button>
+  <br><br>
+  <div id="new_gantt_here" style='width:97%; height:90vh; margin: auto;'></div>
+</body>
+
+<script>
+</script>
+
+<style>
+  #btn_set {
+    position: absolute;
+    top: 110px;
+    right: 20px;
+  }
+
+  #btn_back {
+    position: absolute;
+    top: 110px;
+    left: 20px;
+  }
+</style>
+
+</html>

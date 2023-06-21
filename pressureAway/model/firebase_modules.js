@@ -51,6 +51,7 @@ module.exports = class CRUD {
     static async setNewSched(newData) {
 
         try {
+
             db.ref().set(newData);
         } catch (e) {
             console.error("Error reading document: ", e);

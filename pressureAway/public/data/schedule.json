@@ -1,0 +1,58 @@
+{
+  "data": [
+    {
+      "id": "1",
+      "text": "1",
+      "open": true,
+      "type": "project"
+    },
+    {
+      "id": "5",
+      "text": "5",
+      "open": true,
+      "type": "project"
+    },
+    {
+      "id": "2-1",
+      "text": "2-1",
+      "start_date": "18-06-2023",
+      "duration": 2,
+      "parent": "2"
+    },
+    {
+      "id": "2-2",
+      "text": "2-2",
+      "start_date": "25-06-2023",
+      "duration": 3,
+      "parent": "2"
+    },
+    {
+      "id": "2-3",
+      "text": "2-3",
+      "start_date": "02-07-2023",
+      "duration": 4,
+      "parent": "2"
+    },
+    {
+      "id": "2",
+      "text": "2",
+      "type": "project",
+      "parent": "1",
+      "render": "split"
+    }
+  ],
+  "links": [
+    {
+      "id": "1",
+      "source": "2-1",
+      "target": "2-2",
+      "type": "0"
+    },
+    {
+      "id": "2",
+      "source": "2-2",
+      "target": "2-3",
+      "type": "0"
+    }
+  ]
+}

@@ -1,0 +1,52 @@
+.gantt_tree_content {
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.today {
+  background: #dc4b4b !important;
+}
+
+.weekends {
+  background: #f7d2df !important;
+}
+
+.today_line {
+  background-color: #dc4b4b;
+}
+
+h1 {
+  text-align: center;
+  padding-top: 50px;
+  font-size: 50px;
+  font-weight: bold;
+  color: #FFA500;
+}
+
+.gantt_grid_scale,
+.gantt_task_vscroll {
+  background-color: #eee;
+}
+
+.gantt_grid_scale,
+.gantt_task_scale,
+.gantt_task .gantt_task_scale .gantt_scale_cell,
+.gantt_grid_scale .gantt_grid_head_cell {
+  color: #000000;
+  font-size: 12px;
+  border-bottom: 1px solid #cecece;
+}
+
+.gantt_grid_scale .gantt_grid_head_cell {
+  color: #0000005d;
+  font-size: 17px;
+  border-right: 1px solid #cecece;
+}
+
+.gantt_task_line {
+  background-color: #37c9f2;
+}
+
+.gantt_task_line.gantt_task_content {
+  color: #a91111;
+}

@@ -1,17 +1,18 @@
 $(document).ready(function () {
     getOriSched();
-
-    // $("#btn_set").click(function(){
-    //     setPersonalTask($("#input_date").val(), $("#input_name").val(), $("#input_dataToChange").val());
-    // })
+    getPressureScore();
 });
+
+function toSched() {
+    window.location.href = "./schedule.html";
+}
 
 function getOriSched() {
     $.ajax({
         url: "/getOriSched",
         type: "POST",
         success: function (res) {
-            document.getElementById("all_data").innerHTML = JSON.stringify(res);
+            drawGantt(res);
         },
         error: function (err) {
             swal.fire({
@@ -30,7 +31,7 @@ function getAllData() {
         url: "/getAllData",
         type: "POST",
         success: function (res) {
-            document.getElementById("all_data").innerHTML = JSON.stringify(formatSched(res));
+            return res;
         },
         error: function (err) {
             swal.fire({
@@ -44,16 +45,48 @@ function getAllData() {
     });
 }
 
+function drawGantt(data) {
+    var dataToGantt = { "data": [], "links": [] };
+    var oriSched = data;
+
+    for (var i = 1; i <= oriSched.length; i++) {
+        var eachEmployee = {
+            "id": String(i),
+            "text": oriSched[i - 1].name,
+            "type": "project",
+            "open": true
+        };
+        dataToGantt.data.push(eachEmployee);
+
+        for (var j = 1; j <= oriSched[i - 1].task.length; j++) {
+            task = oriSched[i - 1].task[j - 1];
+            var eachTask = {
+                "id": String(i) + "-" + String(j),
+                "text": task.taskName,
+                "start_date": task.start[0],
+                "duration": task.duration,
+                "parent": String(i),
+                "type": "task",
+            };
+            dataToGantt.data.push(eachTask);
+        }
+    }
+    sessionStorage.setItem("oriSched", JSON.stringify(dataToGantt));
+
+    gantt.init("ori_gantt_here");
+    gantt.parse(dataToGantt);
+}
+
 function setPersonalTask(date, name, dataToChange) {
 
     $.ajax({
-        url: "/getAllData",
+        url: "/setPersonalTask",
         type: "POST",
         success: function (res) {
             for (var i = 0; i < res.project.daily_task.length; i++) {
                 if (date == res.project.daily_task[i].today) {
                     for (var j = 0; j < res.project.employee_num; j++) {
-                        if (name == res.project.daily_task[i].each_task[j].name) {
+                        if (name == res.project.daily_task[i].employee[j].name) {
                             changePersonalTask(i, j, dataToChange);
                             break;
                         }
@@ -85,27 +118,16 @@ function changePersonalTask(date, name, dataToChange) {
     $.ajax({
         url: "/setPersonalTask",
         type: "POST",
-        data: data,
+        data: JSON.stringify(data),
         success: function (res) {
-            document.getElementById("all_data").innerHTML = JSON.stringify(res);
-        },
-        error: function (err) {
             swal.fire({
-                title: "Error",
-                text: err,
-                icon: "error",
+                title: "Success",
+                text: "Data Changed",
+                icon: "success",
             }).then(() => {
                 location.reload();
             });
-        }
-    });
-}
-function getNewSched() { // page 2
-    $.ajax({
-        url: "/getAllData",
-        type: "POST",
-        success: function (res) {
-            document.getElementById("all_data").innerHTML = JSON.stringify(res);
+            // alert("Data Changed");
         },
         error: function (err) {
             swal.fire({
@@ -173,6 +195,7 @@ function setNewSchedData(dataToChange) {
         }
     });
 }
+<<<<<<< HEAD
 function getNewSchedSub() {
 
 
@@ -182,6 +205,27 @@ function getNewSchedSub() {
         data: data,
         success: function (res) {
             document.getElementById("all_data").innerHTML = JSON.stringify(res);
+=======
+
+function getPressureScore() {
+    var date = new Date();
+    var year = date.getFullYear();
+    var month = String(date.getMonth() + 1);
+    if (month.length < 2) month = "0" + month;
+    var day = String(date.getDate());
+    if (day.length < 2) day = "0" + day;
+    var dateToAsk = year + month + day;
+
+    var data = {
+        today: dateToAsk,
+    };
+    $.ajax({
+        url: "/getAvgPressureScore",
+        type: "POST",
+        data: data,
+        success: function (res) {
+            document.getElementById("btn_pressure").innerText = "Pressure Score" + res.avg_pressScore;
+>>>>>>> bb9e836ad0e975a55034c91d7628835cc7d88d9b
         },
         error: function (err) {
             swal.fire({
