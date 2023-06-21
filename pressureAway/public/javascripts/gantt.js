@@ -30,8 +30,8 @@ setInterval(function () {
 }, 1000 * 60);
 
 gantt.config.scale_height = 50;
-
 gantt.config.readonly = true;
+gantt.config.open_split_tasks = true;
 
 gantt.templates.grid_file = function (item) {
   return "<div class='gantt_tree_icon'></div>";

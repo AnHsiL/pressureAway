@@ -14,6 +14,6 @@ router.post('/getOriSched', myModules.getOriSched);
 router.post('/getNewSched', myModules.getNewSched);
 router.post('/getAvgPressureScore', myModules.getAvgPressureScore);
 router.post('/setNewSched', myModules.setNewSched);
-
+router.post('/getNewSchedSub', myModules.getNewSchedSub);
 
 module.exports = router;
