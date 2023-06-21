@@ -1,17 +1,14 @@
 $(document).ready(function () {
-    $("#all_data").innerHTML = "ooo";
-    $("#btn_get").click(function () {
-        getAllData();
-    });
-    $("#btn_set").click(function () {
-        setPersonalTask($("#input_date").val(), $("#input_name").val(), $("#input_dataToChange").val());
-        //location.href='';
-    })
+    getOriSched();
+
+    // $("#btn_set").click(function(){
+    //     setPersonalTask($("#input_date").val(), $("#input_name").val(), $("#input_dataToChange").val());
+    // })
 });
 
 function getAllData() {
     $.ajax({
-        url: "/getAllData",
+        url: "/getOriSched",
         type: "POST",
         success: function (res) {
             document.getElementById("all_data").innerHTML = JSON.stringify(res);
@@ -68,6 +65,79 @@ function changePersonalTask(date, name, dataToChange) {
 
     $.ajax({
         url: "/setPersonalTask",
+        type: "POST",
+        data: data,
+        success: function (res) {
+            document.getElementById("all_data").innerHTML = JSON.stringify(res);
+        },
+        error: function (err) {
+            swal.fire({
+                title: "Error",
+                text: err,
+                icon: "error",
+            }).then(() => {
+                location.reload();
+            });
+        }
+    });
+}
+function getNewSched() { // page 2
+    $.ajax({
+        url: "/getAllData",
+        type: "POST",
+        success: function (res) {
+            document.getElementById("all_data").innerHTML = JSON.stringify(res);
+        },
+        error: function (err) {
+            swal.fire({
+                title: "Error",
+                text: err,
+                icon: "error",
+            }).then(() => {
+                location.reload();
+            });
+        }
+    });
+}
+
+function dateDiff(Date1_, Date2_) {
+    var Date1 = [Date1_.slice(0, 4), Date1_.slice(4, 6), Date1_.slice(6, 8)].join('-')
+    var Date2 = [Date2_.slice(0, 4), Date2_.slice(4, 6), Date2_.slice(6, 8)].join('-')
+
+    var date1 = new Date(Date1);
+    var date2 = new Date(Date2);
+    var milliseconds_Time = date2.getTime() - date1.getTime();
+    return milliseconds_Time / (1000 * 3600 * 24);
+};
+
+function setNewSched(dataToChange) {
+
+    $.ajax({
+        url: "/getNewSched",
+        type: "POST",
+        success: function (res) {
+            setNewSchedData(dataToChange);
+        },
+        error: function (err) {
+            swal.fire({
+                title: "getAllData_error",
+                text: err,
+                icon: "error",
+            }).then(() => {
+                location.reload();
+            });
+        }
+    });
+
+}
+function setNewSchedData(dataToChange) {
+
+    var data = {
+        dataToChange: dataToChange
+    };
+
+    $.ajax({
+        url: "/setNewSched",
         type: "POST",
         data: data,
         success: function (res) {
