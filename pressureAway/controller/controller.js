@@ -282,7 +282,7 @@ function PressureScore(pressureFactor) {
 
 function formatSched(sched) {
     var dailyTask = sched.project.daily_task;
-
+    var test = [];
     var allPersonName = new Array(sched.project.employee_num);
     for (var day = 0; day < dailyTask.length; day++) {
         for (var stuff = 0; stuff < dailyTask[day].employee.length; stuff++) {
@@ -308,59 +308,62 @@ function formatSched(sched) {
             }
         }
     }
-
     var finalData = [];
-    for (var stuff = 0; stuff < sched.project.employee_num; stuff++) {
-        // 建立 allTask 紀錄目前這個 stuff 有的所有任務名字
-        var allTask = [];
-        for (var d = 0; d < allPersonData[allPersonName[stuff]].length; d++) {
-            var findInAllTask = (allTask.indexOf(allPersonData[allPersonName[stuff]][d].taskName) > -1);
-            if (!findInAllTask) allTask.push(allPersonData[allPersonName[stuff]][d].taskName);
-        }
-
-        // 建立 taskCategorize 可以放 taskCategorize["work1"] = ["20230601"];
-        var taskCategorize = new Array(allTask.length);
-        for (var al = 0; al < allTask.length; al++) {
-            taskCategorize[allTask[al]] = new Array();
-        }
-
-        // 放入確切數值, ex: taskCategorize["work1"] = ["20230601"];
-        for (var d = 0; d < allPersonData[allPersonName[stuff]].length; d++) {
-            taskCategorize[allPersonData[allPersonName[stuff]][d].taskName].push(allPersonData[allPersonName[stuff]][d].taskDate);
-        }
-        for (var d = 0; d < allPersonData[allPersonName[stuff]].length; d++) {
-            taskCategorize[allPersonData[allPersonName[stuff]][d].taskName].sort();
-        }
-
-        // 計算 duration 和 start_date
-        var taskWithDuration = [];
-        for (var taskC_i = 0; taskC_i < taskCategorize.length; taskC_i++) {
-            var workName = allTask[taskC_i]; // taskCategorize["work1"] 的 "work1"
-            var duration = [], start = [];
-            var continueDay = 0;
-            var begin = taskCategorize[workName][0];
-            for (var j = 0; j < taskCategorize[workName].length; j++) {
-                var curr = taskCategorize[workName][j];
-                if (dateDiff(begin, curr) != continueDay || j == taskCategorize[workName].length - 1) {
-                    duration.push(continueDay + 1);
-                    var startDate = [begin.slice(6, 8), begin.slice(4, 6), begin.slice(0, 4)].join('-');
-                    start.push(startDate);
-                    begin = taskCategorize[workName][j + 1];
-                    continueDay = 1;
-                }
-                else continueDay++;
-            }
-            taskWithDuration.push({
-                taskName: workName,
-                start: start,
-                duration: duration
-            });
-        }
-        finalData.push({
-            name: allPersonName[stuff],
-            task: taskWithDuration
-        });
+    //for (var stuff = 0; stuff < sched.project.employee_num; stuff++) {
+    var stuff = 0;
+    // 建立 allTask 紀錄目前這個 stuff 有的所有任務名字
+    var allTask = [];
+    for (var d = 0; d < allPersonData[allPersonName[stuff]].length; d++) {
+        var findInAllTask = (allTask.indexOf(allPersonData[allPersonName[stuff]][d].taskName) > -1);
+        if (!findInAllTask) allTask.push(allPersonData[allPersonName[stuff]][d].taskName);
     }
+    // 建立 taskCategorize 可以放 taskCategorize["work1"] = ["20230601"];
+    var taskCategorize = new Array(allTask.length);
+    for (var al = 0; al < allTask.length; al++) {
+        taskCategorize[allTask[al]] = new Array();
+    }
+
+    // 放入確切數值, ex: taskCategorize["work1"] = ["20230601"];
+    for (var d = 0; d < allPersonData[allPersonName[stuff]].length; d++) {
+        taskCategorize[allPersonData[allPersonName[stuff]][d].taskName].push(allPersonData[allPersonName[stuff]][d].taskDate);
+    }
+    for (var d = 0; d < allPersonData[allPersonName[stuff]].length; d++) {
+        taskCategorize[allPersonData[allPersonName[stuff]][d].taskName].sort();
+    } console.log(allTask);
+    // 計算 duration 和 start_date
+    var taskWithDuration = [];
+    //for (var taskC_i = 0; taskC_i < taskCategorize.length; taskC_i++) {
+    var workName = allTask[8]; // taskCategorize["work1"] 的 "work1"
+
+    var duration = [], start = [];
+    var continueDay = 0;
+    var begin = taskCategorize[workName][0];
+    for (var j = 0; j < taskCategorize[workName].length; j++) {
+        var curr = taskCategorize[workName][j];
+        console.log("datediff" + dateDiff(begin, curr));
+        if (dateDiff(begin, curr) != continueDay || j == taskCategorize[workName].length - 1) {
+            duration.push(continueDay);
+            var startDate = [begin.slice(6, 8), begin.slice(4, 6), begin.slice(0, 4)].join('-');
+            start.push(startDate);
+            begin = taskCategorize[workName][j];
+            continueDay = 1;
+        }
+        else continueDay++;
+    }
+    taskWithDuration.push({
+        taskName: workName,
+        start: start,
+        duration: duration
+    });
+    //}
+
+    finalData.push({
+        name: allPersonName[stuff],
+        task: taskWithDuration
+    });
+    test.push(0);
+    //}
+
     return finalData;
 }
 function getNewSchedSubFun(Alldata, allPressStatusArr) {
@@ -594,52 +597,40 @@ function formatSched1(sched) {
         }
         count_day[i] = b;
     }
-
+    var work_detail = {};
+    var start = [];
+    var duration = [];
+    var du_count = 0;
+    var work = [100];
+    for (var i = 0; i < 100; ++i) {
+        work[i] = 0;
+    }
     for (var i = 0; i < Alldata.employee_num; ++i) {
         for (var j = 0; j < Alldata.daily_task.length; ++j) {
             if (Alldata.daily_task[j].employee[i].task) {
                 for (var k = 0; k < Alldata.daily_task[j].employee[i].task.length; ++k) {
-                    work = Alldata.daily_task[j].employee[i].task[k];
+                    work_detail = Alldata.daily_task[j].employee[i].task[k];
+                    if (work[work_detail] != 0)
+                        continue;
                     for (var l = j; l < Alldata.daily_task.length; ++l) {
-                        var check = 0;
-                        if (Alldata.daily_task[l].employee[i].task) {
-                            for (var m = 0; m < Alldata.daily_task[l].employee[i].task.length; ++m) {
-                                for (var z = 0; z < arr.length; z++) {
-                                    if (work == arr[z].name && Alldata.daily_task[l].today == arr[z].to && arr[z].employee == i) {
-                                        check = 1;
-                                        break;
-                                    }
-                                }
-                                if (check) {
-                                    break;
-                                }
-                                if (Alldata.daily_task[l].employee[i].task[m] == work || allPressStatusArr[l].pressArr[j] > 60) {
-                                    check = 1;
-                                    break;
-                                }
-                            }
-                        }
-                        if (check) {
-                            continue;
-                        }
-                        else {
-                            if (count_day[i][l] < -1 || l > 26)
-                                continue;
-                            arr_.begin = Alldata.daily_task[j].today;
-                            arr_.to = Alldata.daily_task[l].today;
-                            arr_.name = work;
-                            arr_.employee = i;
-                            re_arr[i].push(work);
-                            arr.push(JSON.parse(JSON.stringify(arr_)));
-                            count_day[i][j]++;
-                            count_day[i][l]--;
-                            count++;
-                            break;
+                        for (m = 0; m < arr.length; ++m) {
+                            if (Alldata.daily_task[l].employee[i].task[m]);
                         }
                     }
+
+                    arr_.begin = Alldata.daily_task[j].today;
+                    arr_.to = Alldata.daily_task[l].today;
+                    arr_.name = work;
+                    arr_.employee = i;
+                    re_arr[i].push(work);
+                    arr.push(JSON.parse(JSON.stringify(arr_)));
+                    count_day[i][j]++;
+                    count_day[i][l]--;
+                    count++;
+                    break;
                 }
             }
-
         }
     }
+
 }

@@ -173,11 +173,8 @@ function setNewSchedData(dataToChange) {
         }
     });
 }
-function getNewSchedSub(dataToChange) {
+function getNewSchedSub() {
 
-    var data = {
-        dataToChange: dataToChange
-    };
 
     $.ajax({
         url: "/getNewSchedSub",
