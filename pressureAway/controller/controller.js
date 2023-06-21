@@ -132,8 +132,8 @@ module.exports = class Controller {
         CRUD.readAllData()
             .then((r_data) => {
                 var allPressStatusArr = allPressStatus(r_data.project);
-                var newSched = formatSched(newSch(r_data.project, allPressStatusArr));
-                //var newSched = newSch(r_data.project, allPressStatusArr);
+                //var newSched = formatSched(newSch(r_data.project, allPressStatusArr));
+                var newSched = newSch(r_data.project, allPressStatusArr);
                 res.json(newSched);
             });
     }
@@ -534,19 +534,12 @@ function newSch(Alldata, allPressStatusArr) {
             var employee_ = {};
             if (Alldata.daily_task[i].employee[j].task) {
                 var task_list = [];
-                check3 = 0;
                 for (var k = 0; k < Alldata.daily_task[i].employee[j].task.length; ++k) {
                     check2 = 0;
 
                     for (m = 0; m < arr.length; ++m) {
                         if (Alldata.daily_task[i].today == arr[m].begin && arr[m].employee == j && arr[m].name == Alldata.daily_task[i].employee[j].task[k]) {
                             check2 = 1;
-                            break;
-                        }
-                        if (Alldata.daily_task[i].today == arr[m].to && arr[m].employee == j && check3 != 1) {
-                            check3 = 1;
-                            check2 = 2;
-                            place = m;
                             break;
                         }
                     }
@@ -556,8 +549,10 @@ function newSch(Alldata, allPressStatusArr) {
                     if (check2 == 0) {
                         task_list.push(Alldata.daily_task[i].employee[j].task[k]);
                     }
-                    if (check2 == 2) {
-                        task_list.push(arr[place].name);
+                }
+                for (m = 0; m < arr.length; ++m) {
+                    if (Alldata.daily_task[i].today == arr[m].to && arr[m].employee == j) {
+                        task_list.push(arr[m].name);
                     }
                 }
             }
