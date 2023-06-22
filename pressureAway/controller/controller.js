@@ -1153,7 +1153,7 @@ function newSch(Alldata, allPressStatusArr) {
                                     if (check) {
                                         break;
                                     }
-                                    if (Alldata.daily_task[l].employee[i].task[m] == work || allPressStatusArr[l].pressArr[j] > 60) {
+                                    if (Alldata.daily_task[l].employee[i].task[m] == work || allPressStatusArr[l].pressArr[i] > 60) {
                                         check = 1;
                                         break;
                                     }
