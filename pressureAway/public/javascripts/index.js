@@ -1,4 +1,5 @@
 $(document).ready(function () {
+    setToday();
     getOriSched();
     getPressureScore();
 });
@@ -213,7 +214,20 @@ function getPressureScore() {
         type: "POST",
         data: data,
         success: function (res) {
-            document.getElementById("btn_pressure").innerText = "Pressure Score" + res.avg_pressScore;
+            var score = res.avg_pressScore;
+            document.getElementById("btn_pressure").innerText = "Pressure Score\n" + score;
+            if(score <33){
+                $("#btn_pressure").css("background-color","HoneyDew");
+                $("#btn_pressure").css("border-color","MediumSeaGreen");
+                $("#btn_pressure").css("border-width","1.3px");
+                $("#btn_pressure").css("color","MediumSeaGreen");
+            }
+            else if(score < 66){
+                $("#btn_pressure").css("background-color","PaleTurquoise");
+                $("#btn_pressure").css("border-color","#258E8E");
+                $("#btn_pressure").css("border-width","1.3px");
+                $("#btn_pressure").css("color","#258E8E");
+            }
         },
         error: function (err) {
             swal.fire({
@@ -225,4 +239,14 @@ function getPressureScore() {
             });
         }
     });
+}
+
+function setToday(){
+    var date = new Date();
+    var month = String(date.getMonth() + 1);
+    if (month.length < 2) month = "0" + month;
+    var day = String(date.getDate());
+    if (day.length < 2) day = "0" + day;
+    var today = [date.getFullYear(), month, day].join('/');
+    document.getElementById("today").innerHTML = today;
 }
