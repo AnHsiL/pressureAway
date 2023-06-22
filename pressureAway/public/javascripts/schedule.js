@@ -142,30 +142,33 @@ function drawNewGantt(newSched) {
   console.log(newSched);
 
   for (var i = 1; i <= newSched.length; i++) {// run everyone's schedule
-    for (var j = 0; j < newSched[i - 1].task.length; j++) {// run everyone's task
-      curSched = newSched[i - 1].task[j];// current task
+    for (var j = 1; j <= newSched[i - 1].task.length; j++) {// run everyone's task
+      curSched = newSched[i - 1].task[j - 1];// current task
       for (var k = 0; k < oriSched.data.length; k++) {// run original schedule
+        // TODO: MODIFY includes
         if (oriSched.data[k].id.includes(i + "-") && oriSched.data[k].text == curSched.taskName) {// find current task in original schedule
-          oriSched.data[k].id = "#" + oriSched.data[k].id;
-          oriSched.data[k].text = "#" + oriSched.data[k].text;
+          oriSched.data[k].id = "@" + oriSched.data[k].id;
+          oriSched.data[k].text = "@" + oriSched.data[k].text;
           oriSched.data[k].type = "project";
           oriSched.data[k].render = "split";
+          oriSched.data[k].color = "#ffa500";
+          oriSched.data[k].textColor = "#000000";
           oriSched.data[k].open = true;
-          delete oriSched.data[k].color;
           for (var l = 0; l < curSched.duration.length; l++) {
+            var oriSchedId = oriSched.data[k].id.split("-");
             var eachTask = {
-              "id": String(i) + "-" + String(j) + "-" + String(l),
-              "text": curSched.taskName,
+              "id": String(i) + "-" + String(oriSchedId[1]) + "-" + String(l),
+              "text": "#" + curSched.taskName,
               "start_date": curSched.start[l],
               "duration": curSched.duration[l],
-              "parent": "#" + String(i) + "-" + String(j),
-              "type": "task",
+              "parent": "@" + String(i) + "-" + String(oriSchedId[1]),
+              "type": "task"
             };
             oriSched.data.push(eachTask);
             var eachLink = {
-              "id": String(i) + "-" + String(j) + "-" + String(l),
-              "source": String(i) + "-" + String(j) + "-" + String(l),
-              "target": String(i) + "-" + String(j) + "-" + String(l + 1),
+              "id": String(i) + "-" + String(oriSchedId[1]) + "-" + String(l),
+              "source": String(i) + "-" + String(oriSchedId[1]) + "-" + String(l),
+              "target": String(i) + "-" + String(oriSchedId[1]) + "-" + String(l + 1),
               "type": "0"
             };
             oriSched.links.push(eachLink);
