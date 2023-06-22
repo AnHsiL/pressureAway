@@ -46,7 +46,3 @@ h1 {
 .gantt_task_line {
   background-color: #37c9f2;
 }
-
-.gantt_task_line.gantt_task_content {
-  color: #a91111;
-}

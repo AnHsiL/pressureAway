@@ -1,15 +1,17 @@
-header{
+header {
     position: fixed;
     top: 2%;
     left: 2%;
     width: 100%;
     height: 40px;
 }
-footer{
+
+footer {
     position: fixed;
     bottom: 0;
     width: 100%;
-    height: 80px;   /* Height of the footer */
+    height: 80px;
+    /* Height of the footer */
     background-color: orange;
     align-items: center;
     padding-left: 3%;
@@ -18,112 +20,127 @@ footer{
 
 
 /* button */
-.btn-noHover{
+.btn-noHover {
     border: none;
     background-color: transparent;
 }
-.btn_orange_noHover{
+
+.btn_orange_noHover {
     border: none;
-    color:orange;
+    color: #ffa500;
     background-color: transparent;
 }
-.btn-orange{
+
+.btn-orange {
     border-radius: 0.25rem;
     border: solid 1.3px orange;
-    color:white;
+    color: white;
     padding: 7px 13px;
     font-weight: 650;
     background-color: orange;
 }
-.btn-orange:hover{
+
+.btn-orange:hover {
     border: solid 1.3px orange;
-    color:white;
+    color: white;
     background-color: rgb(255, 184, 51);
 }
-.btn-orange-outline{
+
+.btn-orange-outline {
     border-radius: 0.25rem;
     border: solid 1.3px orange;
-    color:orange;
+    color: orange;
     padding: 7px 13px;
     font-weight: 650;
     background-color: white;
 }
-.btn-orange-outline:hover{
+
+.btn-orange-outline:hover {
     border: solid 1.3px orange;
-    color:white;
+    color: white;
     background-color: orange;
 }
-.btn-cancel{
+
+.btn-cancel {
     border-radius: 0.25rem;
     border: solid 1.3px rgb(149, 149, 149);
-    color:white;
+    color: white;
     padding: 7px 13px;
     font-weight: 650;
     background-color: rgb(149, 149, 149);
 }
-.btn-cancel:hover{
+
+.btn-cancel:hover {
     border: solid 1.3px rgb(149, 149, 149);
-    color:white;
+    color: white;
     background-color: rgb(197, 197, 197);
 }
-.btn-cancel-outline{
+
+.btn-cancel-outline {
     border-radius: 0.25rem;
     border: solid 1.3px rgb(149, 149, 149);
-    color:rgb(149, 149, 149);
+    color: rgb(149, 149, 149);
     padding: 7px 13px;
     font-weight: 650;
     background-color: white;
 }
-.btn-cancel-outline:hover{
+
+.btn-cancel-outline:hover {
     border: solid 1.3px orange;
-    color:white;
+    color: white;
     background-color: rgb(149, 149, 149);
 }
-.btn-orange-double{
+
+.btn-orange-double {
     border-radius: 0.25rem;
     border: double 3px orange;
     padding: 4px 10px;
-    color:orange;
+    color: orange;
     font-weight: 650;
     background-color: white;
 }
-.btn-orange-double:hover{
+
+.btn-orange-double:hover {
     border: double 3px white;
-    color:white;
+    color: white;
     background-color: orange;
 }
-.btn-danger-outline{
+
+.btn-danger-outline {
     border-radius: 0.25rem;
     border: double 3px salmon;
     padding: 4px 10px;
-    color:salmon;
+    color: salmon;
     font-weight: 650;
     background-color: white;
 }
-.btn-danger-outline:hover{
+
+.btn-danger-outline:hover {
     border: double 3px white;
-    color:white;
+    color: white;
     background-color: salmon;
 }
-.btn-bidding{
-    position:fixed; 
-    top: 80%; 
-    left: 90%; 
-    border-radius: 50%; 
-    border: double 10px white; 
-    height: 80px; 
+
+.btn-bidding {
+    position: fixed;
+    top: 80%;
+    left: 90%;
+    border-radius: 50%;
+    border: double 10px white;
+    height: 80px;
     width: 80px;
-    color:white;
+    color: white;
     font-weight: 650;
     background-color: darkorange;
 }
-.btn-bidding:hover{
-    border: double 10px white; 
+
+.btn-bidding:hover {
+    border: double 10px white;
     background-color: orange;
 }
 
 /* other */
-.title{
+.title {
     font-size: 3.5em;
     font-weight: 600;
     -webkit-text-stroke: 1.5px white;
@@ -132,94 +149,109 @@ footer{
     top: 38%;
     left: 34%;
 }
-.top-title{
+
+.top-title {
     padding: 0px 30px;
-    margin-top:0px !important;
+    margin-top: 0px !important;
     font-size: 2.7em;
     color: orange;
-    font-weight: bold; 
+    font-weight: bold;
 }
-.sub-title{
+
+.sub-title {
     padding: 30px 0px;
     font-size: 2em;
     color: orange;
-    font-weight: bold; 
+    font-weight: bold;
     text-align: center;
 }
-.text-item{
+
+.text-item {
     margin-top: 10px;
 }
-.oneline-item{
+
+.oneline-item {
     display: inline;
     margin-right: 5px;
     margin-bottom: 30px;
     vertical-align: baseline;
 }
-a:link{
+
+a:link {
     color: white;
     background-color: transparent;
     text-decoration: none;
 }
+
 a:visited {
     color: rgb(255, 255, 255);
     background-color: transparent;
     text-decoration: none;
 }
+
 a:hover {
     color: rgb(180, 90, 0);
     background-color: transparent;
     text-decoration: none;
 }
-.input-data{
+
+.input-data {
     font-size: 0.8em;
     color: rgb(148, 96, 0) !important;
 }
-.flex-center-container{
-    display: flex; 
-    align-items: center; 
+
+.flex-center-container {
+    display: flex;
+    align-items: center;
     justify-content: center;
-    height: 550px; 
+    height: 550px;
     width: 1240px;
 }
-.flex-center-item{
+
+.flex-center-item {
     min-width: 420px;
     background-color: white;
-    border-radius: 0.5rem; 
-    border:double 10px;
+    border-radius: 0.5rem;
+    border: double 10px;
 }
-.flex-top-container{
-    display: flex; 
-    align-items:top; 
+
+.flex-top-container {
+    display: flex;
+    align-items: top;
     justify-content: center;
     flex-wrap: wrap;
 }
-.flex-top-item{
+
+.flex-top-item {
     height: fit-content;
     width: 90%;
     min-width: 200px;
     background-color: white;
-    border-radius: 0.5rem; 
-    border:solid 0.5px lightgray;
+    border-radius: 0.5rem;
+    border: solid 0.5px lightgray;
     padding: 15px 20px;
     margin-top: 10px;
 }
-.flex-top-item-btn-left{
+
+.flex-top-item-btn-left {
     padding: 4px 7px;
     font-weight: normal;
     float: right;
     align-content: center;
 }
-.flex-top-button{
+
+.flex-top-button {
     font-size: 1.1em;
     font-weight: bold;
     color: brown;
     padding-top: 0px;
     padding-left: 0px;
     background-color: transparent;
-    text-align:start;
+    text-align: start;
     border: none;
 }
-.flex-top-button:hover{
+
+.flex-top-button:hover {
     color: darkred;
 }
 
@@ -229,28 +261,32 @@ a:hover {
     background-color: transparent;
     fill: orange;
 }
+
 .icon:hover {
     fill: rgb(255, 196, 0);
 }
+
 .icon-white {
     border: none;
     background-color: transparent;
     fill: white;
 }
+
 .icon-white:hover {
     fill: rgba(255, 255, 255, 0.874);
 }
 
 
 /* layout */
-.float-postition-top{   
+.float-postition-top {
     /* 搭配 float-end 使用, 
         ex: class="float-end float-postition-top" */
     margin-right: 15px;
     margin-left: 15px;
     margin-top: 10px;
 }
-.float-main-top{   
+
+.float-main-top {
     /* 搭配 float-end 使用, 
         ex: class="float-end float-main-top" */
     padding-right: 10px;
@@ -261,7 +297,7 @@ a:hover {
 
 /* dropdown */
 .dropbtn {
-    background-color:transparent;
+    background-color: transparent;
     color: orange;
     padding: 10px 16px;
     margin-top: 15px;
@@ -270,10 +306,12 @@ a:hover {
     font-weight: bold;
     border: solid 1px orange;
 }
+
 .dropdown {
     position: relative;
     display: inline-block;
 }
+
 .dropdown-content {
     display: none;
     position: absolute;
@@ -281,7 +319,8 @@ a:hover {
     border: solid 1px orange;
     z-index: 1;
 }
-.dropdown-content button{
+
+.dropdown-content button {
     width: 100%;
     background-color: white;
     color: orange;
@@ -289,11 +328,16 @@ a:hover {
     padding: 12px 16px;
     display: block;
 }
+
 .dropdown-content button:hover {
     color: white;
     background-color: orange;
 }
-.dropdown:hover .dropdown-content {display: block;}
+
+.dropdown:hover .dropdown-content {
+    display: block;
+}
+
 .dropdown:hover .dropbtn {
     background-color: darkorange;
     color: white;
@@ -301,17 +345,20 @@ a:hover {
 
 /* sweet alert */
 .swal2-popup.swal2-modal {
-    font-size: 16px; 
+    font-size: 16px;
     width: auto;
-    min-width:30%;
+    min-width: 30%;
     padding: 40px 20px 20px 20px;
 }
+
 .swal2-modal .swal2-title {
     font-size: 1.5em;
 }
+
 .swal2-modal .swal2-text {
     padding: 10px 10px 10px 20px;
 }
+
 .swal2-modal button {
     padding: 6px 15px;
 }
