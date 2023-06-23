@@ -11,7 +11,7 @@ function allowToNewSched() {
   // judge if the pressure score is too low to don't get into the schedule page
   var avgPressureScore = sessionStorage.getItem("avgPressureScore");
   avgPressureScore = parseInt(avgPressureScore);
-  if (avgPressureScore < 67) {
+  if (avgPressureScore < 66) {
     swal.fire({
       title: "Warning!",
       text: "Your pressure score is too low to get into the schedule page",
@@ -50,7 +50,23 @@ function getNewSchedSub() {
     type: "POST",
     success: function (res) {
       sessionStorage.setItem("modifiedTask", JSON.stringify(res));
-      getNewSched();
+      var newTask = false;
+      for (var i of res.getNewSchedSub) {
+        if (i.length != 0) {
+          newTask = true;
+          break;
+        }
+      }
+      if (newTask)
+        getNewSched();
+      else
+        swal.fire({
+          title: "Warning!",
+          text: "There is no task to be modified",
+          icon: "warning",
+        }).then(() => {
+          window.location.href = "./index.html";
+        });
     },
     error: function (err) {
       swal.fire({
@@ -64,12 +80,11 @@ function getNewSchedSub() {
   });
 }
 
-function setNewSched() {
+function setNewSched(dataToChange) {
   $.ajax({
     url: "/setNewSched",
     type: "POST",
     success: function (res) {
-      alert("Data Changed");
       setSched(dataToChange);
     },
     error: function (err) {
@@ -121,7 +136,7 @@ function drawNewGantt(newSched) {
   console.log("newSched");// modified schedule
   console.log(newSched);
 
-  var taskNum = 0, taskIdx, curSched, curTask, parentId;
+  var taskNum = 0, curSched;
   for (let idx in modifiedTask) {
     taskNum += modifiedTask[idx].length;// count modified task number
   }
@@ -176,20 +191,20 @@ function drawNewGantt(newSched) {
           oriSched.data[k].textColor = "#000000";
           oriSched.data[k].open = true;
           for (var l = 0; l < curSched.duration.length; l++) {
-            var oriSchedId = oriSched.data[k].id.split("-");
+            var oriSchedId = oriSched.data[k].id.split("-")[1];
             var eachTask = {
-              "id": String(i) + "-" + String(oriSchedId[1]) + "-" + String(l),
+              "id": String(i) + "-" + String(oriSchedId) + "-" + String(l),
               "text": "#" + curSched.taskName,
               "start_date": curSched.start[l],
               "duration": curSched.duration[l],
-              "parent": "@" + String(i) + "-" + String(oriSchedId[1]),
+              "parent": "@" + String(i) + "-" + String(oriSchedId),
               "type": "task"
             };
             oriSched.data.push(eachTask);
             var eachLink = {
-              "id": String(i) + "-" + String(oriSchedId[1]) + "-" + String(l),
-              "source": String(i) + "-" + String(oriSchedId[1]) + "-" + String(l),
-              "target": String(i) + "-" + String(oriSchedId[1]) + "-" + String(l + 1),
+              "id": String(i) + "-" + String(oriSchedId) + "-" + String(l),
+              "source": String(i) + "-" + String(oriSchedId) + "-" + String(l),
+              "target": String(i) + "-" + String(oriSchedId) + "-" + String(l + 1),
               "type": "0"
             };
             oriSched.links.push(eachLink);
@@ -199,7 +214,8 @@ function drawNewGantt(newSched) {
       }
     }
   }
-  ``
+  console.log("oriSched with modify task");
+  console.log(oriSched);
   gantt.init("new_gantt_here");
   gantt.parse(oriSched);
 }
@@ -280,7 +296,7 @@ function setSched(dataToChange) {
         text: "Data Changed",
         icon: "success",
       }).then(() => {
-        location.reload();
+        toStart();
       });
     },
     error: function (err) {

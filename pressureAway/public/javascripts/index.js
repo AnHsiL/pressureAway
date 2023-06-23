@@ -13,8 +13,9 @@ function getOriSched() {
         url: "/getOriSched",
         type: "POST",
         success: function (res) {
-            drawGantt(res);
+            console.log("oriSched");
             console.log(res);
+            drawGantt(res);
         },
         error: function (err) {
             swal.fire({
@@ -47,9 +48,8 @@ function getAllData() {
     });
 }
 
-function drawGantt(data) {
+function drawGantt(oriSched) {
     var dataToGantt = { "data": [], "links": [] };
-    var oriSched = data;
 
     for (var i = 1; i <= oriSched.length; i++) {
         var eachEmployee = {
@@ -61,24 +61,49 @@ function drawGantt(data) {
         dataToGantt.data.push(eachEmployee);
 
         for (var j = 1; j <= oriSched[i - 1].task.length; j++) {
-            task = oriSched[i - 1].task[j - 1];
-            var eachTask = {
-                "id": String(i) + "-" + String(j),
-                "text": task.taskName,
-                "start_date": task.start[0],
-                "duration": task.duration,
-                "parent": String(i),
-                "type": "task",
-            };
-            dataToGantt.data.push(eachTask);
+            var taskNum = oriSched[i - 1].task[j - 1].start.length;
+            var task = oriSched[i - 1].task[j - 1];
+            if (taskNum == 1) {
+                var eachTask = {
+                    "id": String(i) + "-" + String(j),
+                    "text": task.taskName,
+                    "start_date": task.start[0],
+                    "duration": task.duration[0],
+                    "parent": String(i),
+                    "type": "task",
+                };
+                dataToGantt.data.push(eachTask);
+            }
+            else {
+                var taskParent = {
+                    "id": String(i) + "-" + String(j),
+                    "text": task.taskName,
+                    "color": "#ffa500",
+                    "textColor": "#000000",
+                    "parent": String(i),
+                    "type": "project",
+                    "render": "split",
+                    "open": false
+                };
+                dataToGantt.data.push(taskParent);
+                for (var k = 1; k <= taskNum; k++) {
+                    var eachTask = {
+                        "id": String(i) + "-" + String(j) + "-" + String(k),
+                        "text": task.taskName,
+                        "start_date": task.start[k - 1],
+                        "duration": task.duration[k - 1],
+                        "parent": String(i) + "-" + String(j),
+                        "type": "task",
+                    };
+                    dataToGantt.data.push(eachTask);
+                }
+            }
+            sessionStorage.setItem("oriSched", JSON.stringify(dataToGantt));
         }
     }
-    sessionStorage.setItem("oriSched", JSON.stringify(dataToGantt));
-
     gantt.init("ori_gantt_here");
     gantt.parse(dataToGantt);
 }
-
 function setPersonalTask(date, name, dataToChange) {
 
     $.ajax({
