@@ -1,7 +1,7 @@
 $(document).ready(function () {
     setToday();
-    getOriSched();
     getPressureScore();
+    getOriSched();
 });
 
 function toSched() {
@@ -13,6 +13,7 @@ function getOriSched() {
         url: "/getOriSched",
         type: "POST",
         success: function (res) {
+            console.log("oriSched");
             console.log(res);
             drawGantt(res);
         },
@@ -47,9 +48,8 @@ function getAllData() {
     });
 }
 
-function drawGantt(data) {
+function drawGantt(oriSched) {
     var dataToGantt = { "data": [], "links": [] };
-    var oriSched = data;
 
     for (var i = 1; i <= oriSched.length; i++) {
         var eachEmployee = {
@@ -61,24 +61,49 @@ function drawGantt(data) {
         dataToGantt.data.push(eachEmployee);
 
         for (var j = 1; j <= oriSched[i - 1].task.length; j++) {
-            task = oriSched[i - 1].task[j - 1];
-            var eachTask = {
-                "id": String(i) + "-" + String(j),
-                "text": task.taskName,
-                "start_date": task.start[0],
-                "duration": task.duration,
-                "parent": String(i),
-                "type": "task",
-            };
-            dataToGantt.data.push(eachTask);
+            var taskNum = oriSched[i - 1].task[j - 1].start.length;
+            var task = oriSched[i - 1].task[j - 1];
+            if (taskNum == 1) {
+                var eachTask = {
+                    "id": String(i) + "-" + String(j),
+                    "text": task.taskName,
+                    "start_date": task.start[0],
+                    "duration": task.duration[0],
+                    "parent": String(i),
+                    "type": "task",
+                };
+                dataToGantt.data.push(eachTask);
+            }
+            else {
+                var taskParent = {
+                    "id": String(i) + "-" + String(j),
+                    "text": task.taskName,
+                    "color": "#ffa500",
+                    "textColor": "#000000",
+                    "parent": String(i),
+                    "type": "project",
+                    "render": "split",
+                    "open": false
+                };
+                dataToGantt.data.push(taskParent);
+                for (var k = 1; k <= taskNum; k++) {
+                    var eachTask = {
+                        "id": String(i) + "-" + String(j) + "-" + String(k),
+                        "text": task.taskName,
+                        "start_date": task.start[k - 1],
+                        "duration": task.duration[k - 1],
+                        "parent": String(i) + "-" + String(j),
+                        "type": "task",
+                    };
+                    dataToGantt.data.push(eachTask);
+                }
+            }
+            sessionStorage.setItem("oriSched", JSON.stringify(dataToGantt));
         }
     }
-    sessionStorage.setItem("oriSched", JSON.stringify(dataToGantt));
-
     gantt.init("ori_gantt_here");
     gantt.parse(dataToGantt);
 }
-
 function setPersonalTask(date, name, dataToChange) {
 
     $.ajax({
@@ -124,12 +149,10 @@ function changePersonalTask(date, name, dataToChange) {
         success: function (res) {
             swal.fire({
                 title: "Success",
-                text: "Data Changed",
                 icon: "success",
             }).then(() => {
                 location.reload();
             });
-            // alert("Data Changed");
         },
         error: function (err) {
             swal.fire({
@@ -210,24 +233,28 @@ function getPressureScore() {
     var data = {
         today: dateToAsk,
     };
+
     $.ajax({
         url: "/getAvgPressureScore",
         type: "POST",
         data: data,
         success: function (res) {
             var score = res.avg_pressScore;
+            sessionStorage.setItem("avgPressureScore", score);
             document.getElementById("btn_pressure").innerText = "Pressure Score\n" + score;
             if (score < 33) {
                 $("#btn_pressure").css("background-color", "HoneyDew");
                 $("#btn_pressure").css("border-color", "MediumSeaGreen");
                 $("#btn_pressure").css("border-width", "1.3px");
                 $("#btn_pressure").css("color", "MediumSeaGreen");
+                document.getElementById("btn_pressure").disabled = true;
             }
             else if (score < 66) {
                 $("#btn_pressure").css("background-color", "PaleTurquoise");
                 $("#btn_pressure").css("border-color", "#258E8E");
                 $("#btn_pressure").css("border-width", "1.3px");
                 $("#btn_pressure").css("color", "#258E8E");
+                document.getElementById("btn_pressure").disabled = true;
             }
         },
         error: function (err) {
