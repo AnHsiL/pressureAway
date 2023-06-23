@@ -45,7 +45,7 @@ function getNewSchedSub() {
   });
 }
 
-function setNewSched() {
+function setNewSched(dataToChange) {
   $.ajax({
     url: "/setNewSched",
     type: "POST",

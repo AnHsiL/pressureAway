@@ -998,12 +998,19 @@ function formatSched(sched) {
 
                 if (dateDiff(begin, curr) != continueDay || j == taskCategorize[workName].length - 1) {
                     if (j == taskCategorize[workName].length - 1) {
-                        if (continueDay < 1) {
-                            begin = taskCategorize[workName][j];
-                            var startDate = [begin.slice(6, 8), begin.slice(4, 6), begin.slice(0, 4)].join('-');
-                            start.push(startDate);
+                        if (j > 0) {
+                            if (continueDay > 0 && 1 != dateDiff(taskCategorize[workName][j - 1], curr)) {
+                                var startDate = [begin.slice(6, 8), begin.slice(4, 6), begin.slice(0, 4)].join('-');
+                                start.push(startDate);
+                                begin = taskCategorize[workName][j];
+                                duration.push(continueDay);
+                                duration.push(1);
+                            }
+                            else
+                                duration.push(continueDay + 1);
                         }
-                        duration.push(continueDay + 1);
+                        else
+                            duration.push(continueDay + 1);
                     }
                     else
                         duration.push(continueDay);
@@ -1058,6 +1065,9 @@ function getNewSchedSubFun(Alldata, allPressStatusArr) {
                 if (Alldata.daily_task[j].employee[i].task) {
                     count = 0;
                     for (var k = 0; k < Alldata.daily_task[j].employee[i].task.length; ++k) {
+                        if (Alldata.daily_task[j].employee[i].task.length < 3) {
+                            break;
+                        }
                         if (count > 1) {
                             break;
                         }
@@ -1075,7 +1085,7 @@ function getNewSchedSubFun(Alldata, allPressStatusArr) {
                                     if (check) {
                                         break;
                                     }
-                                    if (Alldata.daily_task[l].employee[i].task[m] == work || allPressStatusArr[l].pressArr[j] > 60) {
+                                    if (Alldata.daily_task[l].employee[i].task[m] == work || allPressStatusArr[l].pressArr[i] > 60) {
                                         check = 1;
                                         break;
                                     }
@@ -1091,8 +1101,7 @@ function getNewSchedSubFun(Alldata, allPressStatusArr) {
                                 arr_.to = Alldata.daily_task[l].today;
                                 arr_.name = work;
                                 arr_.employee = i;
-                                if (re_arr[i].includes(work) == false)
-                                    re_arr[i].push(work);
+                                re_arr[i].push(work);
                                 arr.push(JSON.parse(JSON.stringify(arr_)));
                                 count_day[i][j]++;
                                 count_day[i][l]--;
@@ -1136,6 +1145,9 @@ function newSch(Alldata, allPressStatusArr) {
                 if (Alldata.daily_task[j].employee[i].task) {
                     count = 0;
                     for (var k = 0; k < Alldata.daily_task[j].employee[i].task.length; ++k) {
+                        if (Alldata.daily_task[j].employee[i].task.length < 3) {
+                            break;
+                        }
                         if (count > 1) {
                             break;
                         }
@@ -1188,8 +1200,8 @@ function newSch(Alldata, allPressStatusArr) {
         var employee_list = [];
         for (var j = 0; j < Alldata.daily_task[i].employee.length; ++j) {
             var employee_ = {};
+            var task_list = [];
             if (Alldata.daily_task[i].employee[j].task) {
-                var task_list = [];
                 for (var k = 0; k < Alldata.daily_task[i].employee[j].task.length; ++k) {
                     check2 = 0;
 
