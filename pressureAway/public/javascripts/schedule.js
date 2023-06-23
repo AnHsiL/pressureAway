@@ -1,9 +1,28 @@
 $(document).ready(function () {
-  getNewSchedSub();
+  if (allowToNewSched())
+    getNewSchedSub();
 });
 
 function toStart() {
   window.location.href = "./index.html";
+}
+
+function allowToNewSched() {
+  // judge if the pressure score is too low to don't get into the schedule page
+  var avgPressureScore = sessionStorage.getItem("avgPressureScore");
+  avgPressureScore = parseInt(avgPressureScore);
+  if (avgPressureScore < 67) {
+    swal.fire({
+      title: "Warning!",
+      text: "Your pressure score is too low to get into the schedule page",
+      icon: "warning",
+    }).then(() => {
+      window.location.href = "./index.html";
+      return false;
+    });
+  }
+  else
+    return true;
 }
 
 function getNewSched() {
@@ -92,8 +111,10 @@ function drawNewGantt(newSched) {
   modifiedTask = JSON.parse(modifiedTask);
   modifiedTask = modifiedTask.getNewSchedSub;
   for (var i = 0; i < oriSched.data.length; i++) {
-    if (oriSched.data[i].type == "task")
-      oriSched.data[i].color = "#dddddd";
+    if (oriSched.data[i].type == "task") {
+      oriSched.data[i].color = "#666666";
+      oriSched.data[i].textColor = "#aaaaaa";
+    }
   }
   console.log("oriSched");// original schedule
   console.log(oriSched);
@@ -178,7 +199,7 @@ function drawNewGantt(newSched) {
       }
     }
   }
-
+  ``
   gantt.init("new_gantt_here");
   gantt.parse(oriSched);
 }
@@ -231,7 +252,6 @@ function changePersonalTask(date, name, dataToChange) {
       }).then(() => {
         location.reload();
       });
-      // alert("Data Changed");
     },
     error: function (err) {
       swal.fire({
@@ -275,25 +295,6 @@ function setSched(dataToChange) {
   });
 }
 
-
-// function getNewSched() { // page 2
-//   $.ajax({
-//     url: "/getNewSched",
-//     type: "POST",
-//     success: function (res) {
-//       document.getElementById("all_data").innerHTML = JSON.stringify(res);
-//     },
-//     error: function (err) {
-//       swal.fire({
-//         title: "Error",
-//         text: err,
-//         icon: "error",
-//       }).then(() => {
-//         location.reload();
-//       });
-//     }
-//   });
-// }
 
 function dateDiff(Date1_, Date2_) {
   var Date1 = [Date1_.slice(0, 4), Date1_.slice(4, 6), Date1_.slice(6, 8)].join('-')

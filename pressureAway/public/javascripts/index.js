@@ -1,6 +1,6 @@
 $(document).ready(function () {
-    getOriSched();
     getPressureScore();
+    getOriSched();
 });
 
 function toSched() {
@@ -13,6 +13,7 @@ function getOriSched() {
         type: "POST",
         success: function (res) {
             drawGantt(res);
+            console.log(res);
         },
         error: function (err) {
             swal.fire({
@@ -208,12 +209,19 @@ function getPressureScore() {
     var data = {
         today: dateToAsk,
     };
+
     $.ajax({
         url: "/getAvgPressureScore",
         type: "POST",
         data: data,
         success: function (res) {
-            document.getElementById("btn_pressure").innerText = "Pressure Score" + res.avg_pressScore;
+            sessionStorage.setItem("avgPressureScore", res.avg_pressScore);
+            document.getElementById("btn_pressure").innerText = "Pressure Score\n" + res.avg_pressScore;
+            if (res.avg_pressScore < 67) {
+                document.getElementById("btn_pressure").style.backgroundColor = "#00EB00";
+                document.getElementById("btn_pressure").disabled = true;
+
+            }
         },
         error: function (err) {
             swal.fire({
