@@ -14,7 +14,7 @@ function allowToNewSched() {
   if (avgPressureScore < 66) {
     swal.fire({
       title: "Warning!",
-      text: "Your pressure score is too low to get into the schedule page",
+      text: "Your pressure score is too low",
       icon: "warning",
     }).then(() => {
       window.location.href = "./index.html";
@@ -189,7 +189,7 @@ function drawNewGantt(newSched) {
           oriSched.data[k].render = "split";
           oriSched.data[k].color = "#ffa500";
           oriSched.data[k].textColor = "#000000";
-          oriSched.data[k].open = true;
+          oriSched.data[k].open = false;
           for (var l = 0; l < curSched.duration.length; l++) {
             var oriSchedId = oriSched.data[k].id.split("-")[1];
             var eachTask = {
@@ -263,7 +263,6 @@ function changePersonalTask(date, name, dataToChange) {
     success: function (res) {
       swal.fire({
         title: "Success",
-        text: "Data Changed",
         icon: "success",
       }).then(() => {
         location.reload();
@@ -293,7 +292,6 @@ function setSched(dataToChange) {
     success: function (res) {
       swal.fire({
         title: "Success",
-        text: "Data Changed",
         icon: "success",
       }).then(() => {
         toStart();

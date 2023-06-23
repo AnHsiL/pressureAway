@@ -149,12 +149,10 @@ function changePersonalTask(date, name, dataToChange) {
         success: function (res) {
             swal.fire({
                 title: "Success",
-                text: "Data Changed",
                 icon: "success",
             }).then(() => {
                 location.reload();
             });
-            // alert("Data Changed");
         },
         error: function (err) {
             swal.fire({
@@ -249,12 +247,14 @@ function getPressureScore() {
                 $("#btn_pressure").css("border-color", "MediumSeaGreen");
                 $("#btn_pressure").css("border-width", "1.3px");
                 $("#btn_pressure").css("color", "MediumSeaGreen");
+                document.getElementById("btn_pressure").disabled = true;
             }
             else if (score < 66) {
                 $("#btn_pressure").css("background-color", "PaleTurquoise");
                 $("#btn_pressure").css("border-color", "#258E8E");
                 $("#btn_pressure").css("border-width", "1.3px");
                 $("#btn_pressure").css("color", "#258E8E");
+                document.getElementById("btn_pressure").disabled = true;
             }
         },
         error: function (err) {
