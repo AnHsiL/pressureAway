@@ -127,8 +127,8 @@ function drawNewGantt(newSched) {
   modifiedTask = modifiedTask.getNewSchedSub;
   for (var i = 0; i < oriSched.data.length; i++) {
     if (oriSched.data[i].type == "task") {
-      oriSched.data[i].color = "#666666";
-      oriSched.data[i].textColor = "#aaaaaa";
+      oriSched.data[i].color = "#bbbbbb";
+      oriSched.data[i].textColor = "#ffffff";
     }
   }
   console.log("oriSched");// original schedule

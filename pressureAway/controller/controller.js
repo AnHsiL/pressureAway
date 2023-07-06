@@ -79,7 +79,7 @@ module.exports = class Controller {
 
     }
     getAvgPressureScore(req, res, next) {
-        var dateToAsk = req.body.today;
+        var dateToAsk = "20230708"//req.body.today;
         CRUD.readAllData()
             .then((r_data) => {
                 var allPressStatusArr = allPressStatus(r_data.project);
@@ -162,7 +162,6 @@ function dateDiff(Date1_, Date2_) {
 
 function allPressStatus(data) {
     // console.log(data)
-    var totalDay = dateDiff(data.start_date, data.deadline);
     var allPressData = [];
 
     var stuff_num = data.employee_num;
@@ -172,7 +171,6 @@ function allPressStatus(data) {
     var totalSugar = new Array(stuff_num).fill(0);
 
     for (var day = 0; day < data.daily_task.length; day++) {
-        var lastDay = dateDiff(data.daily_task[day].today, data.deadline);
 
         for (var stuff = 0; stuff < stuff_num; stuff++) {
             var eachPressureFactor = data.daily_task[day].employee[stuff].pressure_factor;
@@ -187,14 +185,9 @@ function allPressStatus(data) {
             eachPressureFactor.over_suager_day = sugarContinue[stuff];
 
             var eachTask = data.daily_task[day].employee[stuff].task;
-            var taskUnfinished = 0;
-            if (eachTask)
-                for (var k = 0; k < eachTask.length; k++)
-                    taskUnfinished++;
-            data.daily_task[day].employee[stuff].complete_pa = 0;
-            if (taskUnfinished > 0)
-                data.daily_task[day].employee[stuff].complete_pa = (taskUnfinished / eachTask.length) * totalDay / lastDay;
-            else data.daily_task[day].employee[stuff].complete_pa = 1;
+            let avg_work = 6.5;
+            data.daily_task[day].employee[stuff].complete_pa = (eachTask)?
+                eachTask.length / avg_work : 1;
         }
     }
 
@@ -270,13 +263,12 @@ function PressureScore(pressureFactor) {
         screenTime = pressureFactor.screen_worktime / (3 * 60);
     }
     score += screenTime * screen_weight;
-
-    if (pressureFactor.complete_pa > 10) score += complete_weight;
-    else if (pressureFactor.complete_pa > 5) score += 90 / 100 * complete_weight;
-    else if (pressureFactor.complete_pa > 3) score += 70 / 100 * complete_weight;
+    if (pressureFactor.complete_pa > 2) score += complete_weight;
+    else if (pressureFactor.complete_pa > 1.4) score += 90 / 100 * complete_weight;
+    else if (pressureFactor.complete_pa > 1.2) score += 70 / 100 * complete_weight;
     else if (pressureFactor.complete_pa > 1) score += 50 / 100 * pressureFactor.complete_pa * complete_weight;
-    else if (pressureFactor.complete_pa > -1) score += 20 / 100 * complete_weight;
-    else if (pressureFactor.complete_pa > -3) score += 10 / 100 * complete_weight;
+    else if (pressureFactor.complete_pa > 0.6) score += 20 / 100 * complete_weight;
+    else if (pressureFactor.complete_pa > 0.2) score += 10 / 100 * complete_weight;
     return Math.round(score);
 }
 
