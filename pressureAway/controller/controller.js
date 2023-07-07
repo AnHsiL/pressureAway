@@ -79,7 +79,7 @@ module.exports = class Controller {
 
     }
     getAvgPressureScore(req, res, next) {
-        var dateToAsk = "20230708"//req.body.today;
+        var dateToAsk = "20230708" // req.body.today;
         CRUD.readAllData()
             .then((r_data) => {
                 var allPressStatusArr = allPressStatus(r_data.project);
@@ -185,7 +185,7 @@ function allPressStatus(data) {
             eachPressureFactor.over_suager_day = sugarContinue[stuff];
 
             var eachTask = data.daily_task[day].employee[stuff].task;
-            let avg_work = 6.5;
+            let avg_work = 5.8;
             data.daily_task[day].employee[stuff].complete_pa = (eachTask)?
                 eachTask.length / avg_work : 1;
         }
@@ -263,12 +263,12 @@ function PressureScore(pressureFactor) {
         screenTime = pressureFactor.screen_worktime / (3 * 60);
     }
     score += screenTime * screen_weight;
-    if (pressureFactor.complete_pa > 2) score += complete_weight;
-    else if (pressureFactor.complete_pa > 1.4) score += 90 / 100 * complete_weight;
-    else if (pressureFactor.complete_pa > 1.2) score += 70 / 100 * complete_weight;
-    else if (pressureFactor.complete_pa > 1) score += 50 / 100 * pressureFactor.complete_pa * complete_weight;
-    else if (pressureFactor.complete_pa > 0.6) score += 20 / 100 * complete_weight;
-    else if (pressureFactor.complete_pa > 0.2) score += 10 / 100 * complete_weight;
+    if (pressureFactor.complete_pa > 2) score += 170 / 100 * complete_weight;
+    else if (pressureFactor.complete_pa > 1.4) score += 140 / 100 * complete_weight;
+    else if (pressureFactor.complete_pa > 1.2) score += 120 / 100 * complete_weight;
+    else if (pressureFactor.complete_pa > 1) score += 70 / 100 * pressureFactor.complete_pa * complete_weight;
+    else if (pressureFactor.complete_pa > 0.6) score += 40 / 100 * complete_weight;
+    else if (pressureFactor.complete_pa > 0.2) score += 20 / 100 * complete_weight;
     return Math.round(score);
 }
 

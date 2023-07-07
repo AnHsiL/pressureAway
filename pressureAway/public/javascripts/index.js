@@ -242,7 +242,7 @@ function getPressureScore() {
             var score = res.avg_pressScore;
             sessionStorage.setItem("avgPressureScore", score);
             document.getElementById("btn_pressure").innerText = "Pressure Score\n" + score;
-            if (score < 33) {
+            if (score < 42) {
                 $("#btn_pressure").css("background-color", "HoneyDew");
                 $("#btn_pressure").css("border-color", "MediumSeaGreen");
                 $("#btn_pressure").css("border-width", "1.3px");
