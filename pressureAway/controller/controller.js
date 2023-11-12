@@ -1,5 +1,13 @@
+require('dotenv').config();
 const CRUD = require("../model/firebase_modules");
-
+const line = require('@line/bot-sdk');
+const config = {
+    channelAccessToken: process.env.CHANNEL_ACCESS_TOKEN,
+    channelSecret: process.env.CHANNEL_SECRET,
+};
+const client = new line.messagingApi.MessagingApiClient({
+    channelAccessToken: process.env.CHANNEL_ACCESS_TOKEN,
+});
 module.exports = class Controller {
     getAllData(req, res, next) {
         try {
@@ -19,6 +27,7 @@ module.exports = class Controller {
                     var allPressStatusArr = allPressStatus(r_data.project);
                     //var newSched = newSch(r_data.project, allPressStatusArr);
                     var newSched = newSch(r_data.project, allPressStatusArr);
+                    client.pushMessage('2001584309', 'hi');
                     CRUD.setNewSched(newSched)
                         .then(() => {
                             res.json({
@@ -148,6 +157,15 @@ module.exports = class Controller {
             res.err();
         }
     }
+    linebot(req, res, next) {
+        Promise
+            .all(req.body.events.map(handleEvent))
+            .then((result) => res.json(result))
+            .catch((err) => {
+                console.error(err);
+                res.status(500).end();
+            });
+    }
 }
 
 function dateDiff(Date1_, Date2_) {
@@ -186,7 +204,7 @@ function allPressStatus(data) {
 
             var eachTask = data.daily_task[day].employee[stuff].task;
             let avg_work = 5.8;
-            data.daily_task[day].employee[stuff].complete_pa = (eachTask)?
+            data.daily_task[day].employee[stuff].complete_pa = (eachTask) ?
                 eachTask.length / avg_work : 1;
         }
     }
@@ -580,4 +598,19 @@ function newSch(Alldata, allPressStatusArr) {
     Allproject.isChanged = true;
     All.project = Allproject;
     return All;
+}
+
+
+function handleEvent(event) {
+    if (event.type !== 'message' || event.message.type !== 'text') {
+
+        return Promise.resolve(null);
+    }
+    return client.replyMessage({
+        replyToken: event.replyToken,
+        messages: [{
+            type: 'text',
+            text: 'hi'
+        }],
+    });
 }
