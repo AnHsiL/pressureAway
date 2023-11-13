@@ -19,10 +19,12 @@ module.exports = class Controller {
                 .then((r_data) => {
                     // console.log(r_data.project)
                     var allPressStatusArr = allPressStatus(r_data.project);
-                    //var newSched = newSch(r_data.project, allPressStatusArr);
                     var newSched = newSch(r_data.project, allPressStatusArr);
                     CRUD.setNewSched(newSched)
                         .then(() => {
+                            var content = "員工行程已變更，具體變更人員有: \n"+ // TODO
+                            "\n詳情請至網頁(https://dadc-2001-b400-e2aa-c95d-8402-3b5d-d6d7-9bec.ngrok-free.app)查看。";
+                            LineNotify.sendNotify(content);
                             res.json({
                                 status: "succ",
                             });
@@ -158,7 +160,7 @@ module.exports = class Controller {
             LineNotify.sendNotify(content);
         }
         else{
-            var content = req.body.today + ", 員工狀態良好~\n\n詳情可至網頁版查詢 ( http://localhost:3000)";
+            var content = req.body.today + ", 員工狀態良好~\n\n詳情可至網頁版查詢 ( https://dadc-2001-b400-e2aa-c95d-8402-3b5d-d6d7-9bec.ngrok-free.app )";
             LineNotify.sendNotify(content);
         }
     }

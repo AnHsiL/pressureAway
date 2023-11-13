@@ -285,28 +285,28 @@ function setSched(dataToChange) {
     dataToChange: dataToChange
   };
 
-  $.ajax({
-    url: "/setNewSched",
-    type: "POST",
-    data: JSON.stringify(data),
-    success: function (res) {
-      swal.fire({
-        title: "Success",
-        icon: "success",
-      }).then(() => {
-        toStart();
-      });
-    },
-    error: function (err) {
-      swal.fire({
-        title: "Error",
-        text: err,
-        icon: "error",
-      }).then(() => {
-        location.reload();
-      });
-    }
-  });
+	$.ajax({
+		url: "/setNewSched",
+		type: "POST",
+		data: JSON.stringify(data),
+		success: function (res) {
+		swal.fire({
+			title: "Success",
+			icon: "success",
+		}).then(() => {
+			toStart();
+		});
+		},
+		error: function (err) {
+		swal.fire({
+			title: "Error",
+			text: err,
+			icon: "error",
+		}).then(() => {
+			location.reload();
+		});
+		}
+	});
 }
 
 
