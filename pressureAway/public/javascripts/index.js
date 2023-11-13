@@ -249,7 +249,7 @@ function getPressureScore() {
                 $("#btn_pressure").css("color", "MediumSeaGreen");
                 document.getElementById("btn_pressure").disabled = true;
             }
-            else if (score < 66) {
+            else if (score <= 66) {
                 $("#btn_pressure").css("background-color", "PaleTurquoise");
                 $("#btn_pressure").css("border-color", "#258E8E");
                 $("#btn_pressure").css("border-width", "1.3px");
@@ -277,4 +277,27 @@ function setToday() {
     if (day.length < 2) day = "0" + day;
     var today = [date.getFullYear(), month, day].join('/');
     document.getElementById("today").innerHTML = today;
+}
+
+function sendWarning(){
+    var score = sessionStorage.getItem("avgPressureScore");
+    if (score <= 66) {
+        // TODO
+    }
+    else {
+        $.ajax({
+            url: "/getChatgptMes",
+            type: "POST",
+            success: function (res) {
+                alert(json.stringify(res))
+            },
+            error: function (err) {
+                swal.fire({
+                    title: "Error",
+                    text: err,
+                    icon: "error",
+                });
+            }
+        });
+    }
 }

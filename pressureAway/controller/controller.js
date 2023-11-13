@@ -1,4 +1,5 @@
 const CRUD = require("../model/firebase_modules");
+const ChatGPTAPI = require("../model/chatgpt_moudules");
 
 module.exports = class Controller {
     getAllData(req, res, next) {
@@ -79,7 +80,8 @@ module.exports = class Controller {
 
     }
     getAvgPressureScore(req, res, next) {
-        var dateToAsk = "20230708" // req.body.today;
+        // var dateToAsk = req.body.today; 
+        var dateToAsk = "20230717";
         CRUD.readAllData()
             .then((r_data) => {
                 var allPressStatusArr = allPressStatus(r_data.project);
@@ -148,6 +150,19 @@ module.exports = class Controller {
             res.err();
         }
     }
+
+    getChatgptMes(req, res, next) {
+        try {
+            ChatGPTAPI.helloGPT()
+                .then((data) => {
+                    console.log(data.message)
+                    res.json(data.message);
+                });
+        } catch (err) {
+            res.err();
+        }
+    }
+    
 }
 
 function dateDiff(Date1_, Date2_) {
@@ -185,7 +200,7 @@ function allPressStatus(data) {
             eachPressureFactor.over_suager_day = sugarContinue[stuff];
 
             var eachTask = data.daily_task[day].employee[stuff].task;
-            let avg_work = 5.8;
+            let avg_work = 8;
             data.daily_task[day].employee[stuff].complete_pa = (eachTask)?
                 eachTask.length / avg_work : 1;
         }
@@ -263,11 +278,11 @@ function PressureScore(pressureFactor) {
         screenTime = pressureFactor.screen_worktime / (3 * 60);
     }
     score += screenTime * screen_weight;
-    if (pressureFactor.complete_pa > 2) score += 170 / 100 * complete_weight;
-    else if (pressureFactor.complete_pa > 1.4) score += 140 / 100 * complete_weight;
+    if (pressureFactor.complete_pa > 2) score += 150 / 100 * complete_weight;
+    else if (pressureFactor.complete_pa > 1.4) score += 130 / 100 * complete_weight;
     else if (pressureFactor.complete_pa > 1.2) score += 120 / 100 * complete_weight;
-    else if (pressureFactor.complete_pa > 1) score += 70 / 100 * pressureFactor.complete_pa * complete_weight;
-    else if (pressureFactor.complete_pa > 0.6) score += 40 / 100 * complete_weight;
+    else if (pressureFactor.complete_pa > 1) score += 80 / 100 * pressureFactor.complete_pa * complete_weight;
+    else if (pressureFactor.complete_pa > 0.6) score += 50 / 100 * complete_weight;
     else if (pressureFactor.complete_pa > 0.2) score += 20 / 100 * complete_weight;
     return Math.round(score);
 }

@@ -6,6 +6,7 @@
     "start": "node ./bin/www"
   },
   "dependencies": {
+    "chatgpt": "^5.2.5",
     "cookie-parser": "~1.4.4",
     "debug": "~2.6.9",
     "express": "~4.16.1",
@@ -14,7 +15,9 @@
     "generator": "^1.0.1",
     "http-errors": "~1.6.3",
     "jade": "~1.11.0",
-    "morgan": "~1.9.1"
+    "morgan": "~1.9.1",
+    "openai": "^4.0.0",
+    "readline-sync": "^1.4.10"
   },
   "main": "app.js",
   "author": "",
