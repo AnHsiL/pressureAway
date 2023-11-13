@@ -15,6 +15,8 @@
     "generator": "^1.0.1",
     "http-errors": "~1.6.3",
     "jade": "~1.11.0",
+    "line-notify-nodejs": "^1.0.1",
+    "linebot": "^1.6.1",
     "morgan": "~1.9.1",
     "openai": "^4.0.0",
     "readline-sync": "^1.4.10"

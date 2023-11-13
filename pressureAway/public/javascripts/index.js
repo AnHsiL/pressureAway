@@ -280,24 +280,33 @@ function setToday() {
 }
 
 function sendWarning(){
-    var score = sessionStorage.getItem("avgPressureScore");
-    if (score <= 66) {
-        // TODO
-    }
-    else {
-        $.ajax({
-            url: "/getChatgptMes",
-            type: "POST",
-            success: function (res) {
-                alert(json.stringify(res))
-            },
-            error: function (err) {
-                swal.fire({
-                    title: "Error",
-                    text: err,
-                    icon: "error",
-                });
-            }
-        });
-    }
+    var date = new Date();
+    var year = date.getFullYear();
+    var month = String(date.getMonth() + 1);
+    if (month.length < 2) month = "0" + month;
+    var day = String(date.getDate());
+    if (day.length < 2) day = "0" + day;
+    var dateToAsk = year + "/" + month + "/"  + day;
+
+    var data = {
+        today: dateToAsk,
+        avg_pressureScore: sessionStorage.getItem("avgPressureScore")
+    };
+    // alert(JSON.stringify(data))
+    $.ajax({
+        url: "/sendDailyWarning",
+        type: "POST",
+        data:data,
+        success: function () {
+            alert("succ")
+        },
+        error: function (err) {
+            swal.fire({
+                title: "Error",
+                text: err,
+                icon: "error",
+            });
+        }
+    });
+    
 }

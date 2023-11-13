@@ -16,6 +16,6 @@ router.post('/getNewSched', myModules.getNewSched);
 router.post('/getAvgPressureScore', myModules.getAvgPressureScore);
 router.post('/setNewSched', myModules.setNewSched);
 router.post('/getNewSchedSub', myModules.getNewSchedSub);
-router.post('/getChatgptMes', myModules.getChatgptMes);
+router.post('/sendDailyWarning', myModules.sendDailyWarning);
 
 module.exports = router;

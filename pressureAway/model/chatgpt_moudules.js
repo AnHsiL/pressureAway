@@ -19,7 +19,8 @@ module.exports = class ChatGPTAPI {
                 resolve({message : completion_text});
             });
         } catch (e) {
-            console.error("Error chat with chatgpt: ", e);
+            console.log(e);
+            return {message : "[!] chatgpt advise error"};
         }
     }
 }

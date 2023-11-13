@@ -1,5 +1,6 @@
 const CRUD = require("../model/firebase_modules");
 const ChatGPTAPI = require("../model/chatgpt_moudules");
+const LineNotify = require("../model/LineBot");
 
 module.exports = class Controller {
     getAllData(req, res, next) {
@@ -150,16 +151,15 @@ module.exports = class Controller {
             res.err();
         }
     }
-
-    getChatgptMes(req, res, next) {
-        try {
-            ChatGPTAPI.helloGPT()
-                .then((data) => {
-                    console.log(data.message)
-                    res.json(data.message);
-                });
-        } catch (err) {
-            res.err();
+    sendDailyWarning(req, res, next){
+        var avg_score = parseInt(req.body.avg_pressureScore);
+        if(avg_score >= 66){
+            var content = "【警告】 "+ req.body.today + "當前員工壓力大 " + toString(getChatgptMes());
+            LineNotify.sendNotify(content);
+        }
+        else{
+            var content = req.body.today + ", 員工狀態良好~\n\n詳情可至網頁版查詢 ( http://localhost:3000)";
+            LineNotify.sendNotify(content);
         }
     }
     
@@ -595,4 +595,15 @@ function newSch(Alldata, allPressStatusArr) {
     Allproject.isChanged = true;
     All.project = Allproject;
     return All;
+}
+function getChatgptMes() {
+    try {
+        ChatGPTAPI.helloGPT()
+            .then((data) => {
+                console.log(data.message)
+                return data.message;
+            });
+    } catch (err) {
+        return "[!] chatgpt advise error";
+    }
 }
