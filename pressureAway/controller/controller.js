@@ -8,6 +8,11 @@ const config = {
 const client = new line.messagingApi.MessagingApiClient({
     channelAccessToken: process.env.CHANNEL_ACCESS_TOKEN,
 });
+const OpenAIApi = require("openai");
+
+const openai = new OpenAIApi({
+    apiKey: process.env.OPENAI_API_KEY
+});
 module.exports = class Controller {
     getAllData(req, res, next) {
         try {
@@ -27,7 +32,6 @@ module.exports = class Controller {
                     var allPressStatusArr = allPressStatus(r_data.project);
                     //var newSched = newSch(r_data.project, allPressStatusArr);
                     var newSched = newSch(r_data.project, allPressStatusArr);
-                    client.pushMessage('2001584309', 'hi');
                     CRUD.setNewSched(newSched)
                         .then(() => {
                             res.json({
@@ -601,16 +605,36 @@ function newSch(Alldata, allPressStatusArr) {
 }
 
 
-function handleEvent(event) {
+async function handleEvent(event) {
     if (event.type !== 'message' || event.message.type !== 'text') {
 
         return Promise.resolve(null);
     }
+
+    // const { data } = await openai.completions.create({
+    //     model: "gpt-3.5-turbo",
+    //     messages: [
+    //         {
+    //             role: 'user',
+    //             content: event.message.text,
+    //         }
+    //     ],
+    //     max_tokens: 20,
+    // });
+    // const [choices] = data.choices;
+    // const echo = { type: 'text', text: choices.message.content.trim() || '抱歉，我沒有話可說了。' };
+    const echo = { type: 'text', text: '抱歉，我沒有話可說了。' };
+    // use reply API
     return client.replyMessage({
         replyToken: event.replyToken,
         messages: [{
             type: 'text',
-            text: 'hi'
-        }],
+            text: 'chatgpt need money'
+        }, {
+            type: 'text',
+            text: 'but chatgpt usage page 跑不動'
+        },
+        ],
     });
+
 }
