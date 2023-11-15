@@ -7,7 +7,6 @@ $(document).ready(function () {
 function toSched() {
     window.location.href = "./schedule.html";
 }
-
 function getOriSched() {
     $.ajax({
         url: "/getOriSched",
@@ -28,7 +27,6 @@ function getOriSched() {
         }
     });
 }
-
 function getAllData() {
     $.ajax({
         url: "/getAllData",
@@ -47,7 +45,6 @@ function getAllData() {
         }
     });
 }
-
 function drawGantt(oriSched) {
     var dataToGantt = { "data": [], "links": [] };
 
@@ -165,7 +162,6 @@ function changePersonalTask(date, name, dataToChange) {
         }
     });
 }
-
 function dateDiff(Date1_, Date2_) {
     var Date1 = [Date1_.slice(0, 4), Date1_.slice(4, 6), Date1_.slice(6, 8)].join('-')
     var Date2 = [Date2_.slice(0, 4), Date2_.slice(4, 6), Date2_.slice(6, 8)].join('-')
@@ -175,7 +171,6 @@ function dateDiff(Date1_, Date2_) {
     var milliseconds_Time = date2.getTime() - date1.getTime();
     return milliseconds_Time / (1000 * 3600 * 24);
 };
-
 function setNewSched(dataToChange) {
 
     $.ajax({
@@ -220,7 +215,6 @@ function setNewSchedData(dataToChange) {
         }
     });
 }
-
 function getPressureScore() {
     var date = new Date();
     var year = date.getFullYear();
@@ -268,7 +262,6 @@ function getPressureScore() {
         }
     });
 }
-
 function setToday() {
     var date = new Date();
     var month = String(date.getMonth() + 1);
