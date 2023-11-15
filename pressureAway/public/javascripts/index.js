@@ -1,5 +1,5 @@
 $(document).ready(function () {
-    setToday();
+    document.getElementById("today").innerHTML = formatToday();
     getPressureScore();
     getOriSched();
 });
@@ -243,7 +243,7 @@ function getPressureScore() {
                 $("#btn_pressure").css("color", "MediumSeaGreen");
                 document.getElementById("btn_pressure").disabled = true;
             }
-            else if (score <= 66) {
+            else if (score < 66) {
                 $("#btn_pressure").css("background-color", "PaleTurquoise");
                 $("#btn_pressure").css("border-color", "#258E8E");
                 $("#btn_pressure").css("border-width", "1.3px");
@@ -262,24 +262,18 @@ function getPressureScore() {
         }
     });
 }
-function setToday() {
+function formatToday() {
     var date = new Date();
     var month = String(date.getMonth() + 1);
     if (month.length < 2) month = "0" + month;
     var day = String(date.getDate());
     if (day.length < 2) day = "0" + day;
     var today = [date.getFullYear(), month, day].join('/');
-    document.getElementById("today").innerHTML = today;
+    return today;
 }
-
 function sendWarning(){
-    var date = new Date();
-    var year = date.getFullYear();
-    var month = String(date.getMonth() + 1);
-    if (month.length < 2) month = "0" + month;
-    var day = String(date.getDate());
-    if (day.length < 2) day = "0" + day;
-    var dateToAsk = year + "/" + month + "/"  + day;
+
+    var dateToAsk = formatToday();
 
     var data = {
         today: dateToAsk,

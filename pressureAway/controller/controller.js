@@ -20,9 +20,20 @@ module.exports = class Controller {
                     // console.log(r_data.project)
                     var allPressStatusArr = allPressStatus(r_data.project);
                     var newSched = newSch(r_data.project, allPressStatusArr);
+
                     CRUD.setNewSched(newSched)
                         .then(() => {
-                            var content = "員工行程已變更，具體變更人員有: \n" + // TODO
+                            var changedStuff = "";
+                            var getNewSchedSub = getNewSchedSubFun(r_data.project, allPressStatusArr);
+                            for (var i = 0; i < getNewSchedSub.length - 1; i++) {
+                                if (getNewSchedSub[i].length) {
+                                    changedStuff += r_data.project.daily_task[0].employee[i].name + ",";
+                                }
+                            }
+                            if (getNewSchedSub[i - 1].length) {
+                                changedStuff += r_data.project.daily_task[0].employee[i-1].name;
+                            }
+                            var content = "員工行程已變更，具體變更人員有: \n" + changedStuff +
                                 "\n詳情請至網頁(https://dadc-2001-b400-e2aa-c95d-8402-3b5d-d6d7-9bec.ngrok-free.app)查看。";
                             LineNotify.sendNotify(content);
                             res.json({
@@ -83,7 +94,8 @@ module.exports = class Controller {
     }
     getAvgPressureScore(req, res, next) {
         // var dateToAsk = req.body.today; 
-        var dateToAsk = "20231124";
+        var dateToAsk = "20231108";
+        
         CRUD.readAllData()
             .then((r_data) => {
                 var allPressStatusArr = allPressStatus(r_data.project);
@@ -96,6 +108,7 @@ module.exports = class Controller {
                     }
                 }
                 var avg_pressScore = Math.round(allPressureScore / stuff_num);
+                console.log("get score: "+ avg_pressScore);
                 res.json({
                     avg_pressScore: avg_pressScore
                 });

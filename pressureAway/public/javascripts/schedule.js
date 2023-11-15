@@ -81,21 +81,31 @@ function getNewSchedSub() {
 }
 
 function setNewSched(dataToChange) {
-  $.ajax({
-    url: "/setNewSched",
-    type: "POST",
-    success: function (res) {
-      setSched(dataToChange);
-    },
-    error: function (err) {
-      swal.fire({
-        title: "Error",
-        text: err,
-        icon: "error",
-      }).then(() => {
-        location.reload();
-      });
-    }
+	var data = {
+		dataToChange: dataToChange
+	  };
+	$.ajax({
+		url: "/setNewSched",
+		type: "POST",
+		data: JSON.stringify(data),
+		success: function (res) {
+			//   setSched(dataToChange);
+			swal.fire({
+				title: "Success",
+				icon: "success",
+			}).then(() => {
+				toStart();
+			});
+		},
+		error: function (err) {
+		swal.fire({
+			title: "Error",
+			text: err,
+			icon: "error",
+		}).then(() => {
+			location.reload();
+		});
+		}
   });
 }
 
@@ -279,36 +289,6 @@ function changePersonalTask(date, name, dataToChange) {
     }
   });
 }
-
-function setSched(dataToChange) {
-  var data = {
-    dataToChange: dataToChange
-  };
-
-	$.ajax({
-		url: "/setNewSched",
-		type: "POST",
-		data: JSON.stringify(data),
-		success: function (res) {
-		swal.fire({
-			title: "Success",
-			icon: "success",
-		}).then(() => {
-			toStart();
-		});
-		},
-		error: function (err) {
-		swal.fire({
-			title: "Error",
-			text: err,
-			icon: "error",
-		}).then(() => {
-			location.reload();
-		});
-		}
-	});
-}
-
 
 function dateDiff(Date1_, Date2_) {
   var Date1 = [Date1_.slice(0, 4), Date1_.slice(4, 6), Date1_.slice(6, 8)].join('-')
