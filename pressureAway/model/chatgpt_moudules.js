@@ -78,11 +78,12 @@ let gptAnswers = [
 
 module.exports = class ChatGPTAPI {
     
-    static async helloGPT() {
+    static async askChatGPT() {
         try {
             const chatCompletion = await openai.chat.completions.create({
                 model:"gpt-3.5-turbo",
-                messages: [{"role": "user", "content": "員工壓力大時該提供什麼樣的零食?"}],
+                messages: [{"role": "user", "content": "請給員工壓力大時的一個建議，一個就好，\
+                不要一些，請用繁體"}],
             })
             
             const completion_text = chatCompletion.choices[0].message;

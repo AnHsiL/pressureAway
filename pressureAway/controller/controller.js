@@ -34,7 +34,7 @@ module.exports = class Controller {
                                 changedStuff += r_data.project.daily_task[0].employee[i-1].name;
                             }
                             var content = "員工行程已變更，具體變更人員有: \n" + changedStuff +
-                                "\n詳情請至網頁(https://dadc-2001-b400-e2aa-c95d-8402-3b5d-d6d7-9bec.ngrok-free.app)查看。";
+                                "\n詳情請至網頁(https://0532-39-9-68-212.ngrok-free.app)查看。";
                             LineNotify.sendNotify(content);
                             res.json({
                                 status: "succ",
@@ -171,7 +171,8 @@ module.exports = class Controller {
             try {
                 ChatGPTAPI.pressureAwayGPT()
                 .then((data) => {
-                    var content = "【警告】 " + req.body.today + ", 當前員工壓力大, " + data.message;
+                    var content = "【警告】 " + req.body.today + ", 當前員工壓力大, " 
+                                    + data.message;
                     LineNotify.sendNotify(content);
                 });
             } catch (err) {
@@ -179,29 +180,10 @@ module.exports = class Controller {
             }
         }
         else {
-            var content = req.body.today + ", 員工狀態良好~\n\n詳情可至網頁版查詢 ( https://dadc-2001-b400-e2aa-c95d-8402-3b5d-d6d7-9bec.ngrok-free.app )";
+            var content = req.body.today + ", 員工狀態良好~\n\n詳情可至網頁版查詢 ( https://0532-39-9-68-212.ngrok-free.app )";
             LineNotify.sendNotify(content);
         }
     }
-    getChangename(req, res, next) {
-        CRUD.readAllData()
-            .then((r_data) => {
-                var content = "更改的成員有 : \n";
-                var allPressStatusArr = allPressStatus(r_data.project);
-                var getNewSchedSub = getNewSchedSubFun(r_data.project, allPressStatusArr);
-                for (var i = 0; i < getNewSchedSub.length - 1; i++) {
-                    if (getNewSchedSub[i].length) {
-                        content += r_data.project.daily_task[0].employee[i].name + ",";
-                    }
-                }
-                if (getNewSchedSub[i - 1].length) {
-                    content += r_data.project.daily_task[0].employee[i-1].name;
-                }
-                content += "\n\n詳情可至網頁版查詢 ( https://dadc-2001-b400-e2aa-c95d-8402-3b5d-d6d7-9bec.ngrok-free.app )"
-                LineNotify.sendNotify(content);
-            });
-    }
-
 }
 
 function dateDiff(Date1_, Date2_) {

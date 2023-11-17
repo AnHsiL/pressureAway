@@ -17,5 +17,4 @@ router.post('/getAvgPressureScore', myModules.getAvgPressureScore);
 router.post('/setNewSched', myModules.setNewSched);
 router.post('/getNewSchedSub', myModules.getNewSchedSub);
 router.post('/sendDailyWarning', myModules.sendDailyWarning);
-router.post('/getChangename', myModules.getChangename);
 module.exports = router;
